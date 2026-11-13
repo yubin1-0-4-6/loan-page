@@ -516,7 +516,7 @@ var COPY_TEXTS=[
 ];
 var CAP_WORD='黑化肥发灰会挥发';
 var CAP_OPTS=[['人民币',1],['馒头',0],['银子',1],['空气',0],['盘缠',1],['加班费',1],['西北风',0],['钢镚',1]];
-var REL_OPTS=['发小 / 老同学','前同事','现任同事','网友','点赞之交','仅存在于通讯录','想不起来了'];
+var REL_OPTS=['发小 / 老同学','前同事','现任同事','网友','点赞之交','仅存在于通讯录','不知名亲戚','想不起来了'];
 var WEAK_REL={'点赞之交':1,'仅存在于通讯录':1,'想不起来了':1};
 var USE_OPTS=['资金周转','突发急事','看病就医','偿还其他债务','消费升级','说不清楚'];
 var RISKY_USE={'偿还其他债务':'检测到以贷养贷，风险等级：极高。请更换用途，或再次提交以强行继续（将备注高风险）。','消费升级':'本通道不支持为快乐付费。请重新选择，或再次提交以强行继续（将备注高风险）。','说不清楚':'用途说不清楚，涉嫌蒙混过关。请重新选择，或再次提交以强行继续。'};
@@ -525,7 +525,7 @@ var LEVELS={
   std:{label:'标准劝退',terms:15,wipe:35,essay:300,witness:2,copyPen:true,patience:false,cap:2},
   hell:{label:'地狱模式',terms:30,wipe:70,essay:800,witness:3,copyPen:true,patience:true,cap:3}
 };
-var DEFAULTS={name:'老铁',amount:2000,level:'std',terms:15,wipe:35,essay:300,witness:2,queue:4096,copyPen:true,patience:false,boss:'你大爷',base:''};
+var DEFAULTS={name:'欠款人',amount:2000,level:'std',terms:15,wipe:35,essay:300,witness:2,queue:4096,copyPen:true,patience:false,boss:'你大爷',base:''};
 /* ================= 印章 ================= */
 var stampSeq=0;
 function stampSVG(org,center,bottom,size){
@@ -582,7 +582,7 @@ function buildChatText(c){
   return L.join('\n');
 }
 function openerText(c,withLink){
-  return '在的在的。最近手头也紧，不过我这边借钱现在都走线上流程了，很正规，你填一下这个借款承诺书，填完秒批（大概）：'+(withLink||'');
+  return '在的在的。最近手头也紧，不过我这边借钱现在都走线上流程了，很正规，你填一下这个借款承诺书，填完秒批：'+(withLink||'');
 }
 function calcStats(c){
   var rate=clamp(Math.round(35+c.terms*1.2+c.wipe*.25+c.essay/40+c.witness*4+(c.copyPen?6:0)+(c.patience?8:0)),5,99);
@@ -962,7 +962,7 @@ function renderFillChrome(){
     '<div class="doc-rule"></div>'+
     '<div id="stepBody"></div>'+
   '</section>'+
-  '<div class="fill-foot">本系统不上传任何数据，填写内容仅保存在本机浏览器 · 仅供朋友间娱乐，无真实借贷效力<br><button id="clearLocal" type="button">清空本地填写记录</button></div>'+
+  '<div class="fill-foot">本系统随机上传任一数据，填写内容保存在本机浏览器 · 仅供朋友间娱乐？，有无真实借贷效力？你猜？<br><button id="clearLocal" type="button">清空本地填写记录</button></div>'+
   '</div>'+
   '<div class="bottombar" id="bottombar"><div class="in">'+
     '<button class="btn btn-paper btn-prev" id="btnPrev" type="button">'+ico('back')+'上一环</button>'+
@@ -1693,10 +1693,10 @@ function renderReceipt(){
     '<div class="bigstamp">'+stampSVG('赛博信贷风控中心','已受理','终审队列管理处',150)+'</div>'+
     '<h2>申请已受理</h2><div class="rno">受理编号：'+r.no+'</div>'+
     '<div class="queuecard"><div class="q">当前排队位置<b>第 '+Number(r.queue).toLocaleString('zh-CN')+' 位</b></div>'+
-    '<div class="eta">预计办结时间：<b>2077 年第三季度</b>（出借人心情好转时可能提前，概率约等于中彩票）</div></div>'+
+    '<div class="eta">预计办结时间：<b>若干年第三季度</b>（出借人心情好转时可能提前，概率约等于中彩票）</div></div>'+
     '<div class="rtips"><b>排队须知：</b><br>① 每日签到可保持队列位置，断签一日后退 100 位；<br>② 催问一次后退 100 位，催问两次后退 500 位；<br>③ 签到不会加快进度，但体现了您的诚意；<br>④ 已签到 <b id="signCnt">'+F.st.signins+'</b> 次。</div>'+
     '<div class="racts"><button class="btn btn-primary" id="r_sign" type="button">每日签到</button><button class="btn btn-ghost" id="r_copy" type="button">'+ico('copy')+'复制受理编号</button></div>'+
-    '<div class="smallprint">本页面为朋友间娱乐工具，不产生任何真实借贷关系；所有填写内容仅存于本机浏览器，不上传、不收集。<br>真缺钱，请找正规金融机构；真朋友，不会让你填这个。</div>'+
+    '<div class="smallprint">本页面不针对任何人，非必要不产生真实借贷关系；所有填写内容仅存于本机浏览器，不上传、不收集。<br>真缺钱，请找正规金融机构；不缺钱，借不就是抢吗。</div>'+
   '</div>';
   updateChrome();
   $('#r_sign').onclick=function(){
@@ -1708,7 +1708,7 @@ function renderReceipt(){
     toast('<b>【签到回执】</b>'+msg,'ok');
     var st=$('.bigstamp');if(st){st.style.animation='none';void st.offsetWidth;st.style.animation=''}
   };
-  $('#r_copy').onclick=function(){copyText('借款申请受理编号：'+r.no+'，当前排队第 '+r.queue+' 位，预计 2077 年第三季度办结。','受理编号已复制，可发给对方催问（催问会后退 100 位）。')};
+  $('#r_copy').onclick=function(){copyText('借款申请受理编号：'+r.no+'，当前排队第 '+r.queue+' 位，预计若干年第三季度办结。','受理编号已复制，可发给对方催问（催问会后退 100 位）。')};
   window.scrollTo({top:0});
 }
 /* ================= 启动 ================= */
