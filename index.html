@@ -526,6 +526,9 @@ var LEVELS={
   hell:{label:'地狱模式',terms:30,wipe:70,essay:800,witness:3,copyPen:true,patience:true,cap:3}
 };
 var DEFAULTS={name:'欠款人',amount:2000,level:'std',terms:15,wipe:35,essay:300,witness:2,queue:4096,copyPen:true,patience:false,boss:'你大爷',base:''};
+var linkTTL=0;
+var TTL_OPTS=[[0,'永久有效'],[1,'1 小时'],[6,'6 小时'],[24,'1 天'],[72,'3 天'],[168,'7 天'],[720,'30 天']];
+function ttlLabel(h){for(var i=0;i<TTL_OPTS.length;i++)if(TTL_OPTS[i][0]===h)return TTL_OPTS[i][1];return h+' 小时'}
 /* ================= 印章 ================= */
 var stampSeq=0;
 function stampSVG(org,center,bottom,size){
@@ -639,6 +642,7 @@ function renderOwner(){
       '<button class="btn btn-paper" id="a_copy_open" type="button">'+ico('doc')+'复制开场白</button>'+
     '</div>'+
     '<div class="miniacts"><button id="a_guide" type="button">部署教程 · 地址怎么来</button><button id="a_rand" type="button">随机一套缺德配置</button><button id="a_reset" type="button">恢复默认配置</button></div></div>'+
+    '<div class="ctrl" style="margin-top:12px"><label for="c_ttl">链接有效期</label><select id="c_ttl">'+TTL_OPTS.map(function(o){return '<option value="'+o[0]+'">'+o[1]+'</option>'}).join('')+'</select><div class="hint">从点「生成分享链接」那一刻起算；到期后对方打开或刷新链接只见「链接过期通知」，需你重新生成。默认永久有效。</div></div>'+
     '<div class="ctrl" style="margin-top:12px"><label for="c_base">部署地址（生成外链用，可留空）</label><input type="text" id="c_base" value="'+esc(cfg.base)+'" placeholder="https://你的域名/index.html"><div class="hint">先把本 HTML 上传到任意静态托管（步骤见「部署教程」），再填上传后的访问地址；若本页已从线上地址打开，留空即自动使用当前网址。</div><div class="basestatus" id="baseStatus"></div></div>'+
     '<div class="linkrow"><input type="text" id="linkOut" readonly placeholder="点击「生成分享链接」后在此显示" aria-label="分享链接"><button class="btn btn-ghost" id="a_test_link" type="button" style="flex:none">自测</button><button class="btn btn-ghost" id="a_copy_link" type="button" style="flex:none">复制</button></div>'+
     '<div class="linkhint" id="linkHint"></div>'+
@@ -655,6 +659,7 @@ function renderOwner(){
   $('#c_amount').addEventListener('input',function(){cfg.amount=clamp(parseInt(this.value)||0,1,9999999);updateOwner()});
   $('#c_queue').addEventListener('input',function(){cfg.queue=clamp(parseInt(this.value)||0,1,999999);updateOwner()});
   $('#c_base').addEventListener('input',function(){cfg.base=this.value.trim();$('#linkOut').value='';$('#linkHint').textContent='';updateBaseStatus()});
+  $('#c_ttl').addEventListener('change',function(){linkTTL=+this.value;$('#linkOut').value='';$('#linkHint').textContent='';S.tick()});
   $('#a_guide').onclick=function(){S.tick();openGuide()};
   $('#a_test_link').onclick=function(){
     var v=$('#linkOut').value;
@@ -690,14 +695,15 @@ function renderOwner(){
     cfg.queue=pick([512,2048,4096,9999,65536]);cfg.copyPen=Math.random()>.25;cfg.patience=Math.random()>.5;
     S.stamp();syncControls();updateOwner();toast('已随机生成一套缺德配置，请谨慎使用。','warn');
   };
-  $('#a_reset').onclick=function(){var base=cfg.base;cfg=Object.assign({},DEFAULTS);cfg.base=base;S.tick();syncControls();updateOwner();toast('已恢复默认配置。','ok')};
+  $('#a_reset').onclick=function(){var base=cfg.base;cfg=Object.assign({},DEFAULTS);cfg.base=base;linkTTL=0;S.tick();syncControls();updateOwner();toast('已恢复默认配置。','ok')};
   $('#a_link').onclick=function(){
     var base=cfg.base||(location.protocol.indexOf('http')===0?location.href.split('#')[0]:'');
     if(!base){$('#linkHint').textContent='当前是本地文件 / 预览环境，无法直接生成外链：请先把本 HTML 部署到任意静态托管并填写上方「部署地址」，或直接使用聊天文本版（无需部署）。';$('#linkOut').value='';S.err();return}
     if(!/^(https?|file):\/\//i.test(base)){base='https://'+base}
-    var url=base.split('#')[0]+'#c='+encCfg(cfg);
+    var exp=linkTTL>0?Date.now()+linkTTL*3600000:0;
+    var url=base.split('#')[0]+'#c='+encCfg(cfg)+(exp?'&e='+exp:'');
     var loop=/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])([:/]|$)/i.test(base);
-    $('#linkOut').value=url;$('#linkHint').textContent='链接已生成：对方点开即进入填写流程，配置随链接携带。建议先点「自测」确认，再点「复制」把开场白 + 链接发去微信。'+(loop?' 注意：此链接指向本机测试地址，只有你自己能打开；发送前请先部署并更新「部署地址」。':'');
+    $('#linkOut').value=url;$('#linkHint').textContent='链接已生成（'+(exp?'有效期 '+ttlLabel(linkTTL)+'，至 '+fmtDT(exp)+' 到期':'永久有效')+'）：对方点开即进入填写流程，配置随链接携带。建议先点「自测」确认，再点「复制」把开场白 + 链接发去微信。'+(loop?' 注意：此链接指向本机测试地址，只有你自己能打开；发送前请先部署并更新「部署地址」。':'');
     S.ok();
   };
   $('#a_copy_link').onclick=function(){var v=$('#linkOut').value;if(!v){toast('请先点击「生成分享链接」。','warn');S.err();return}copyText(openerText(cfg,v),'开场白 + 链接已复制，去微信发送吧。')};
@@ -709,6 +715,7 @@ function syncControls(){
   $('#c_wipe').value=cfg.wipe;$('#v_wipe').textContent=cfg.wipe+'%';
   $('#c_essay').value=cfg.essay;$('#v_essay').textContent=cfg.essay+' 字';
   $('#v_witness').textContent=cfg.witness;$('#c_copy').checked=cfg.copyPen;$('#c_patience').checked=cfg.patience;
+  $('#c_ttl').value=String(linkTTL);
   $$('#c_level button').forEach(function(b){b.classList.toggle('on',b.dataset.lv===cfg.level)});
 }
 function switchTab(which){
@@ -779,7 +786,8 @@ var GUIDE_FAQ=[
   ['微信提示域名风险 / 打不开？','部分免费域名会被微信拦截。换对象存储 + 自有域名、公司内网地址，或直接发「聊天文本版」（免部署，粘贴即用）。'],
   ['对方中途刷新或关掉怎么办？','进度存在对方自己的浏览器里，重开同一链接会恢复（刷新扣诚意分）；换手机或清缓存则从头开始。所有数据只留在对方本机，你和服务器都看不到。'],
   ['改配置后要重新上传文件吗？','不用。配置编码在链接的 #c= 段里：起草台改参数后重新生成链接即可，文件本身不变，一次部署长期有效。'],
-  ['部署地址到底填什么？','本 HTML 上传后的公网访问地址：文件地址（https://…/index.html）或目录地址（https://…/loan-page/，目录内含 index.html）均可。若起草台本身已从线上地址打开，留空自动用当前网址。']
+  ['部署地址到底填什么？','本 HTML 上传后的公网访问地址：文件地址（https://…/index.html）或目录地址（https://…/loan-page/，目录内含 index.html）均可。若起草台本身已从线上地址打开，留空自动用当前网址。'],
+  ['链接有效期怎么算？','从你点「生成分享链接」那一刻起算，可选 1 小时 / 6 小时 / 1 天 / 3 天 / 7 天 / 30 天，默认永久。到期后对方打开或刷新链接只看到「链接过期通知」，需要你重新生成；永久有效的链接不携带过期信息，旧版链接一律视为永久。']
 ];
 function baseInfo(v){
   v=String(v||'').trim();
@@ -844,7 +852,7 @@ function checkZero(){
 function terminateApplication(){
   if(!F)return;
   var c=F.cfg,preview=F.preview;
-  var rec={until:Date.now()+BL_MS[c.level],level:c.level,at:Date.now(),name:(F.st.answers.basic&&F.st.answers.basic.name)||c.name,docNo:F.st.docNo,dev:deviceId(),cfg:c,preview:preview};
+  var rec={until:Date.now()+BL_MS[c.level],level:c.level,at:Date.now(),name:(F.st.answers.basic&&F.st.answers.basic.name)||c.name,docNo:F.st.docNo,dev:deviceId(),cfg:c,preview:preview,exp:F.exp};
   store.set(blKey(preview),rec);
   store.del(F.key);
   F.timers.forEach(clearTimeout);F.timers=[];
@@ -890,7 +898,7 @@ function renderBlacklist(rec,justTerminated){
   $('#blReflect').onclick=function(){S.err();toast('<b>【反省已收到】</b>态度可嘉，但拉黑时长一秒也不会少。','warn');var p=$('.blpaper');if(p){p.classList.remove('quake');void p.offsetWidth;p.classList.add('quake')}};
   $('#blCopy').onclick=function(){copyText(blacklistText(rec),'黑名单通知书已复制，可发给债主求情（跨浏览器无效）。')};
   if(rec.preview)$('#blExit').onclick=function(){S.tick();renderOwner()};
-  $('#blRetry').onclick=function(){S.tick();enterFill(rec.cfg,rec.preview)};
+  $('#blRetry').onclick=function(){S.tick();enterFill(rec.cfg,rec.preview,rec.exp)};
   window.scrollTo({top:0,behavior:'auto'});
 }
 function updateBlStrip(){
@@ -908,6 +916,54 @@ function tickBL(){
     else c.textContent=fmtLeft(left);}
   var t=$('#blStripTime');
   if(t){var l2=+t.dataset.until-Date.now();if(l2<=0)updateBlStrip();else t.textContent=fmtLeft(l2)}
+  var x=$('#exCount');
+  if(x){x.textContent=fmtLeft(Date.now()-(+x.dataset.since))}
+  checkExp();
+}
+function checkExp(){
+  if(!F||!F.exp||F.st.expired)return;
+  if(Date.now()<=F.exp)return;
+  F.st.expired=true;
+  setTimeout(expireFlow,0);
+}
+function expireFlow(){
+  if(!F)return;
+  var c=F.cfg,e=F.exp;
+  F.timers.forEach(clearTimeout);F.timers=[];
+  F.cleanups.forEach(function(fn){try{fn()}catch(e2){}});F.cleanups=[];
+  F=null;
+  S.err();
+  var o=$('#ovl');o.innerHTML='';
+  var d=document.createElement('div');d.className='ovl-block';
+  d.innerHTML='<div class="wipe-stamp bl"><b>过期</b><span>EXPIRED · 链接有效期已过</span></div>';
+  o.appendChild(d);
+  setTimeout(function(){d.remove();renderExpired(c,e)},1100);
+}
+function expiredText(c,e){
+  return ['【链接过期通知 · 赛博信贷风控中心】','出借人：'+c.boss,'申请金额：'+money(c.amount),'链接有效期至：'+fmtDT(e),'当前状态：已过期，填写入口关闭。','本链接由出借人设置有效期，到期即失效，不可续期。','请联系出借人重新生成链接后再填写。'].join('\n');
+}
+function renderExpired(c,e){
+  document.title='链接已过期 · 赛博信贷风控中心';
+  app.innerHTML=
+  '<div class="fill-wrap"><section class="paper blpaper" id="exBox" aria-label="链接过期通知">'+
+    '<div class="bl-seal"><b>过期</b><span>EXPIRED · LINK CLOSED</span></div>'+
+    '<div class="doc-head"><div class="doc-org" style="font-size:22px">链接过期通知</div><div class="doc-sub">赛博信贷风控中心 · 链接有效期届满</div></div>'+
+    '<div class="doc-rule"></div>'+
+    '<div class="ferr show" style="margin:10px 0">【风控通知】本链接有效期已届满，填写入口关闭，旧链接不可续期。</div>'+
+    '<div class="summary" style="margin-top:6px">'+
+      '<div class="sr"><span>出借人</span><b>'+esc(c.boss)+'</b></div>'+
+      '<div class="sr"><span>申请金额</span><b>'+money(c.amount)+'</b></div>'+
+      '<div class="sr"><span>有效期至</span><b>'+fmtDT(e)+'</b></div>'+
+      '<div class="sr"><span>已过期</span><b class="blcount" id="exCount" data-since="'+e+'">'+fmtLeft(Date.now()-e)+'</b></div>'+
+    '</div>'+
+    '<p style="margin:14px 0 0;font-size:13.5px;line-height:1.9;color:var(--ink)">链接有效期由出借人在生成时设定（1 小时至 30 天或永久）。到期后打开或刷新本链接均只见本通知；如需继续申请，请联系出借人<b>重新生成链接</b>。已产生的拉黑记录不受链接过期影响。</p>'+
+    '<div class="actions" style="margin-top:16px">'+
+      '<button class="btn btn-primary" id="exCopy" type="button">'+ico('doc')+'复制通知去催新链接</button>'+
+    '</div>'+
+    '<div class="fill-foot" style="margin-top:14px">本通知仅保存于本机浏览器 · 仅供朋友间娱乐，无真实借贷效力</div>'+
+  '</section></div>';
+  $('#exCopy').onclick=function(){copyText(expiredText(c,e),'过期通知已复制，发给出借人索要新链接。')};
+  window.scrollTo({top:0,behavior:'auto'});
 }
 setInterval(tickBL,1000);
 /* ================= 填写流程 ================= */
@@ -916,8 +972,9 @@ function stKey(c,preview){return 'jtq_v1_'+encCfg(c)+(preview?':prev':'')}
 function freshState(c){
   return {step:0,score:100,answers:{},resets:{},flags:{},refreshes:0,done:false,signins:0,receipt:null,t0:Date.now(),docNo:'JK-'+today()+'-'+pad(Math.floor(Math.random()*1000000),6),wipes:0};
 }
-function enterFill(c,preview){
+function enterFill(c,preview,exp){
   exitFill(true);
+  if(exp&&Date.now()>exp){renderExpired(c,exp);return}
   var bl=getBL(preview);
   if(bl){renderBlacklist(bl,false);return}
   var key=stKey(c,preview);
@@ -927,7 +984,7 @@ function enterFill(c,preview){
   if(resumed){st.refreshes++;st.score=clamp(st.score-10,0,100)}
   var steps=stepPlan(c);
   var extras=steps.filter(function(id){return id==='reconf'||id==='patience'}).length;
-  F={cfg:c,steps:steps,idx:clamp(st.step,0,steps.length-1),st:st,key:key,preview:!!preview,timers:[],cleanups:[],hidden:extras};
+  F={cfg:c,steps:steps,idx:clamp(st.step,0,steps.length-1),st:st,key:key,preview:!!preview,timers:[],cleanups:[],hidden:extras,exp:exp||0};
   st.step=F.idx;save();
   renderFillChrome();
   if(st.done){renderReceipt();return}
@@ -989,6 +1046,7 @@ function updateChrome(){
   $('#btnPrev').style.visibility=F.idx>0?'visible':'hidden';
   document.title='借款资格审查 · 第 '+(F.idx+1)+' / '+total+' 环节';
   checkZero();
+  checkExp();
 }
 function stepId(){return F.steps[F.idx]}
 function ans(id){id=id||stepId();if(!F.st.answers[id])F.st.answers[id]={};return F.st.answers[id]}
@@ -1714,7 +1772,10 @@ function renderReceipt(){
 /* ================= 启动 ================= */
 function boot(){
   var m=location.hash.match(/#c=([A-Za-z0-9\-_]+)/);
-  if(m){var c=decCfg(m[1]);if(c){enterFill(Object.assign({},DEFAULTS,c),false);return}}
+  if(m){var c=decCfg(m[1]);if(c){
+    var me=location.hash.match(/&e=(\d{10,16})/),exp=me?+me[1]:0;
+    if(exp&&Date.now()>exp){renderExpired(c,exp);return}
+    enterFill(Object.assign({},DEFAULTS,c),false,exp);return}}
   renderOwner();
 }
 window.addEventListener('hashchange',function(){exitFill(true);boot()});
