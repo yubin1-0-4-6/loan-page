@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#c0271d">
+<title>劝退式借款承诺书生成器 · 赛博信贷风控中心</title>
+<style>
+:root{
+  --paper:#f7f2e7; --paper2:#efe6d3; --paper3:#e6dbc2;
+  --ink:#26221c; --ink-soft:#6b6355; --ink-faint:#988d7a;
+  --red:#c0271d; --red-deep:#96170f; --red-soft:#e8b7b0;
+  --blue:#2b4a9f; --green:#2e6b4f; --amber:#a5721c;
+  --desk1:#4a4036; --desk2:#332c25; --scrim:rgba(24,18,13,.58);
+  --serif:"SimSun","Songti SC","STSong",serif;
+  --kai:"KaiTi","STKaiti","Kaiti SC",var(--serif);
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;overflow-x:clip}
+body{
+  font-family:var(--sans);color:var(--ink);min-height:100vh;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgba(255,235,200,.10), transparent 60%),
+    repeating-linear-gradient(93deg, rgba(0,0,0,.07) 0 3px, transparent 3px 9px),
+    linear-gradient(160deg,var(--desk1),var(--desk2) 70%);
+  background-attachment:fixed;
+}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.06;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");}
+::selection{background:var(--red-soft)}
+/* 滚动条：红头文件风 */
+*{scrollbar-width:thin;scrollbar-color:var(--red-deep) var(--paper2)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--paper2)}
+::-webkit-scrollbar-thumb{background:var(--red-deep);border-radius:6px;border:2px solid var(--paper2)}
+::-webkit-scrollbar-thumb:hover{background:var(--red)}
+#app{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:14px 14px 90px}
+/* ---------- 顶栏 ---------- */
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 4px 14px;color:#efe6d3}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-seal{width:38px;height:38px;flex:none;border:2px solid #e8b7b0;border-radius:50%;display:grid;place-items:center;color:#f3d9c8;font-family:var(--serif);font-weight:700;font-size:15px;background:rgba(192,39,29,.35);box-shadow:0 0 0 3px rgba(192,39,29,.18)}
+.brand h1{font-family:var(--serif);font-size:19px;letter-spacing:2px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.brand small{display:block;font-size:11px;letter-spacing:1px;color:#cdbfa8;font-family:var(--sans);font-weight:400;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .sp{flex:1}
+.sndbtn,.exitbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(232,183,176,.5);background:rgba(0,0,0,.18);color:#f3e9d8;border-radius:20px;padding:7px 13px;font-size:12px;cursor:pointer;transition:.15s}
+.sndbtn:hover,.exitbtn:hover{background:rgba(192,39,29,.4)}
+.sndbtn svg{width:15px;height:15px}
+.exitbtn{border-color:#e8b7b0;background:var(--red);font-weight:600}
+/* ---------- 纸张 ---------- */
+.paper{position:relative;background:
+    radial-gradient(circle at 88% 6%, transparent 54px, rgba(140,100,40,.10) 55px, rgba(140,100,40,.16) 58px, transparent 62px),
+    linear-gradient(175deg,#faf6ec,var(--paper) 40%,#f2ecdd);
+  border-radius:4px;box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 34px rgba(0,0,0,.42),0 2px 8px rgba(0,0,0,.3);
+  padding:26px 26px 30px;}
+.paper::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.05;border-radius:4px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");}
+.doc-head{text-align:center;margin-bottom:6px}
+.doc-org{font-family:var(--serif);color:var(--red);font-size:clamp(22px,5.4vw,32px);font-weight:700;letter-spacing:6px}
+.doc-sub{font-size:12px;color:var(--ink-soft);letter-spacing:3px;margin-top:6px}
+.doc-rule{height:0;border-top:3px solid var(--red);border-bottom:1px solid var(--red);padding-top:2px;margin:12px 0 10px}
+.doc-meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;font-size:12px;color:var(--ink-soft);margin-bottom:14px}
+.doc-meta b{color:var(--red-deep);font-weight:600}
+.doc-title{text-align:center;font-family:var(--serif);font-size:21px;font-weight:700;letter-spacing:3px;margin:10px 0 4px}
+.doc-lead{font-family:var(--kai);font-size:16px;line-height:1.9;text-indent:2em;margin:10px 0}
+.doc-lead .pen{color:var(--blue);border-bottom:1px solid var(--blue);padding:0 4px}
+/* ---------- 通用控件 ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:4px;cursor:pointer;font-size:14px;font-weight:600;padding:11px 18px;border:1.5px solid var(--red-deep);transition:transform .08s,box-shadow .15s,background .15s;font-family:var(--sans);line-height:1.2}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.btn-primary{background:linear-gradient(180deg,#cf3527,var(--red) 55%,var(--red-deep));color:#fdf6ea;box-shadow:0 3px 10px rgba(150,23,15,.35)}
+.btn-primary:hover{box-shadow:0 5px 16px rgba(150,23,15,.5)}
+.btn-ghost{background:transparent;color:var(--red-deep)}
+.btn-ghost:hover{background:rgba(192,39,29,.08)}
+.btn-paper{background:#fbf7ee;color:var(--ink);border-color:var(--ink-faint)}
+.btn-paper:hover{border-color:var(--red)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.btn svg{width:15px;height:15px;flex:none}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+/* 手动输入守卫：浏览器自动填充会触发该动画，被 animationstart 监听捕获 */
+@keyframes jtqAutofill{from{opacity:1}to{opacity:1}}
+.manual-guard:-webkit-autofill{animation-name:jtqAutofill;animation-duration:.01s}
+.manual-note{display:inline-block;font-size:11px;color:var(--amber);border:1px dashed var(--amber);border-radius:3px;padding:1px 7px;margin-left:6px;vertical-align:1px;letter-spacing:.5px}
+input[type=text],input[type=tel],input[type=number],input[type=date],select,textarea{
+  width:100%;font-size:16px;color:var(--blue);font-family:var(--kai);
+  background:rgba(255,255,255,.35);border:none;border-bottom:1.5px dashed var(--ink-faint);
+  padding:8px 6px;border-radius:3px 3px 0 0;transition:.15s;appearance:none;-webkit-appearance:none}
+select{font-family:var(--sans);color:var(--ink);background-image:linear-gradient(45deg,transparent 49%,var(--red-deep) 50%),linear-gradient(135deg,var(--red-deep) 50%,transparent 51%);background-position:calc(100% - 18px) 55%,calc(100% - 12px) 55%;background-size:6px 6px;background-repeat:no-repeat;padding-right:30px}
+textarea{border:1.5px dashed var(--ink-faint);border-radius:4px;min-height:110px;resize:vertical;line-height:1.8}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);background:#fffdf6;box-shadow:0 2px 0 -1px var(--red)}
+input[type=checkbox],input[type=radio]{width:19px;height:19px;accent-color:var(--red);flex:none;cursor:pointer}
+input[type=range]{width:100%;appearance:none;-webkit-appearance:none;height:26px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--red-deep),var(--red));box-shadow:inset 0 1px 2px rgba(0,0,0,.25)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:-8px;border-radius:50%;background:#fbf7ee;border:3px solid var(--red-deep);box-shadow:0 2px 5px rgba(0,0,0,.3)}
+input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--red-deep),var(--red))}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fbf7ee;border:3px solid var(--red-deep)}
+.switch{position:relative;display:inline-block;width:46px;height:26px;flex:none}
+.switch input{opacity:0;width:0;height:0;position:absolute}
+.switch i{position:absolute;inset:0;background:var(--paper3);border:1.5px solid var(--ink-faint);border-radius:20px;transition:.2s;cursor:pointer}
+.switch i::after{content:"";position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fbf7ee;border:1.5px solid var(--ink-faint);transition:.2s}
+.switch input:checked+i{background:var(--red);border-color:var(--red-deep)}
+.switch input:checked+i::after{transform:translateX(20px);border-color:var(--red-deep)}
+.switch input:focus-visible+i{outline:2px solid var(--blue);outline-offset:2px}
+/* ---------- 起草台 ---------- */
+.owner-grid{display:grid;gap:16px}
+@media(min-width:1000px){.owner-grid{grid-template-columns:400px 1fr;align-items:start}
+  .owner-left{position:sticky;top:10px;max-height:calc(100vh - 24px);overflow:auto;padding:10px;margin:-10px}
+  .actdock{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(247,242,231,0),var(--paper) 16px);padding:12px 0 8px;margin-top:14px;z-index:5}
+  .tilt{transform:rotate(-.35deg)}}
+.panel-h{display:flex;align-items:baseline;gap:8px;border-bottom:2px solid var(--red);padding-bottom:8px;margin-bottom:14px}
+.panel-h b{font-family:var(--serif);font-size:17px;letter-spacing:2px;color:var(--red-deep)}
+.panel-h span{font-size:11px;color:var(--ink-faint)}
+.ctrl{margin-bottom:13px}
+.ctrl label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:5px}
+.ctrl label output{font-size:12px;color:var(--red-deep);font-weight:700;font-variant-numeric:tabular-nums}
+.ctrl .hint{font-size:11px;color:var(--ink-faint);margin-top:4px;line-height:1.5}
+.ctrl-row{display:flex;gap:10px}.ctrl-row>.ctrl{flex:1}
+.seg{display:flex;border:1.5px solid var(--red-deep);border-radius:4px;overflow:hidden}
+.seg button{flex:1;padding:9px 4px;font-size:13px;font-weight:600;background:transparent;border:none;color:var(--red-deep);cursor:pointer;transition:.15s}
+.seg button+button{border-left:1.5px solid var(--red-deep)}
+.seg button.on{background:var(--red);color:#fdf6ea}
+.stepper{display:flex;align-items:center;gap:0;border:1.5px solid var(--ink-faint);border-radius:4px;width:max-content;background:#fbf7ee}
+.stepper button{width:38px;height:36px;border:none;background:transparent;font-size:19px;color:var(--red-deep);cursor:pointer;font-weight:700}
+.stepper button:hover{background:rgba(192,39,29,.1)}
+.stepper output{width:44px;text-align:center;font-size:15px;font-weight:700;color:var(--ink);border-left:1px solid var(--paper3);border-right:1px solid var(--paper3);line-height:36px}
+.togglerow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--paper3)}
+.togglerow span{font-size:13px;font-weight:600}
+.togglerow small{display:block;font-weight:400;font-size:11px;color:var(--ink-faint);margin-top:2px}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}
+.actions .btn{flex:1 1 45%}
+.actions .btn.wide{flex:1 1 100%}
+.miniacts{display:flex;gap:8px;margin-top:10px}
+.miniacts button{flex:1;background:none;border:1px dashed var(--ink-faint);border-radius:4px;padding:7px;font-size:12px;color:var(--ink-soft);cursor:pointer}
+.miniacts button:hover{color:var(--red-deep);border-color:var(--red)}
+.statstrip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0 4px}
+.stat{background:rgba(192,39,29,.06);border:1px solid var(--red-soft);border-radius:4px;padding:8px 6px;text-align:center}
+.stat b{display:block;font-size:17px;color:var(--red-deep);font-variant-numeric:tabular-nums}
+.stat span{font-size:10.5px;color:var(--ink-soft);letter-spacing:.5px}
+.linkrow{display:flex;gap:8px;margin-top:12px}
+.linkrow input{flex:1;font-family:var(--sans);font-size:12px;color:var(--ink-soft);border:1.5px solid var(--paper3);border-radius:4px;background:#fbf7ee;padding:9px}
+.linkhint{font-size:11.5px;color:var(--amber);margin-top:6px;line-height:1.6}
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--red);margin-bottom:0}
+.tabs button{padding:9px 16px;font-size:13px;font-weight:600;background:var(--paper2);border:1px solid var(--paper3);border-bottom:none;color:var(--ink-soft);cursor:pointer;border-radius:6px 6px 0 0}
+.tabs button.on{background:var(--paper);color:var(--red-deep);border-color:var(--red);border-bottom:2px solid var(--paper);margin-bottom:-2px}
+.chatpre{white-space:pre-wrap;word-break:break-word;font-family:var(--sans);font-size:13px;line-height:1.85;color:var(--ink);max-height:560px;overflow:auto;padding:14px 4px}
+.docmini{font-size:13px}
+.docmini ol{margin:8px 0 8px 1.4em;font-family:var(--kai);font-size:14.5px;line-height:1.9}
+.docmini .more{color:var(--ink-faint);font-size:12px;text-align:center;margin:6px 0}
+.stampbox{position:relative;height:120px;margin-top:6px}
+.stampbox .stamp{position:absolute;right:6px;top:0;transform:rotate(-12deg)}
+.signline{position:absolute;left:4px;bottom:14px;font-family:var(--kai);font-size:15px;color:var(--ink)}
+.signline .pen{color:var(--blue)}
+/* ---------- 填写流程 ---------- */
+.fill-wrap{max-width:680px;margin:0 auto}
+.fill-top{position:sticky;top:0;z-index:30;background:linear-gradient(180deg,rgba(51,44,37,.97),rgba(51,44,37,.92));-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);margin:-14px -14px 12px;padding:10px 16px 12px;color:#efe6d3;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.fill-top .row1{display:flex;align-items:center;gap:8px;font-size:12px}
+.fill-top .row1 .t{font-family:var(--serif);letter-spacing:1.5px;font-weight:700;font-size:13.5px;color:#f3d9c8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fill-top .row1 .sp{flex:1}
+[hidden]{display:none !important}
+.scorechip{border:1px solid rgba(232,183,176,.55);border-radius:12px;padding:3px 10px;font-size:11.5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.scorechip.low{background:rgba(192,39,29,.5);border-color:#e8b7b0}
+.segs{display:flex;gap:3px;margin-top:9px}
+.segs i{flex:1;height:5px;border-radius:3px;background:rgba(239,230,211,.22);transition:.3s}
+.segs i.done{background:#cf3527}
+.segs i.cur{background:#e8b7b0;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.45}}
+.stepmeta{display:flex;justify-content:space-between;align-items:baseline;gap:2px 10px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:#cdbfa8}
+.stepmeta b{color:#f3e9d8;font-size:13px}
+.step-title{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:2px;color:var(--red-deep);text-align:center;margin:4px 0 2px}
+.step-sub{text-align:center;font-size:12px;color:var(--ink-faint);margin-bottom:16px}
+.fadein{animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.field{margin-bottom:16px}
+.field>.fl{display:block;font-size:13.5px;font-weight:600;margin-bottom:6px}
+.field>.fl em{font-style:normal;color:var(--red-deep);font-family:var(--serif);margin-right:6px}
+.field .fh{font-size:11.5px;color:var(--ink-faint);margin-top:4px;line-height:1.6}
+.ferr{display:none;font-size:12px;color:var(--red-deep);background:rgba(192,39,29,.08);border-left:3px solid var(--red);padding:6px 9px;border-radius:0 3px 3px 0;margin-top:6px;line-height:1.6}
+.ferr.show{display:block;animation:fadeUp .25s}
+.counter{font-size:11.5px;color:var(--ink-soft);text-align:right;margin-top:4px;font-variant-numeric:tabular-nums}
+.counter.ok{color:var(--green);font-weight:700}
+.radio-row{display:flex;flex-wrap:wrap;gap:8px}
+.radio-pill{display:inline-flex;align-items:center;gap:7px;border:1.5px solid var(--ink-faint);border-radius:4px;padding:8px 12px;font-size:13.5px;cursor:pointer;background:#fbf7ee;transition:.15s}
+.radio-pill:has(input:checked){border-color:var(--red);background:rgba(192,39,29,.08);color:var(--red-deep);font-weight:600}
+.noticebox{height:250px;overflow:auto;border:1.5px solid var(--paper3);border-radius:4px;background:#fbf7ee;padding:14px 16px;font-size:13.5px;line-height:2}
+.noticebox p{margin-bottom:8px;text-indent:0}
+.noticebox b{color:var(--red-deep)}
+.readmeta{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-soft);margin:8px 0;font-variant-numeric:tabular-nums}
+.checkline{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;line-height:1.6;cursor:pointer;padding:6px 0}
+.checkline input{margin-top:2px}
+.terms{list-style:none}
+.term{display:flex;gap:10px;align-items:flex-start;padding:10px 8px;border-bottom:1px dashed var(--paper3);font-size:13.5px;line-height:1.75;border-radius:3px;transition:background .2s}
+.term:hover{background:rgba(192,39,29,.04)}
+.term input{margin-top:3px}
+.term .no{font-family:var(--serif);color:var(--red-deep);font-weight:700;flex:none}
+.term.signed{background:rgba(46,107,79,.07)}
+.term.flash{animation:termflash .8s}
+@keyframes termflash{0%,60%{background:rgba(192,39,29,.22)}100%{background:transparent}}
+.termcount{font-size:12.5px;color:var(--ink-soft);text-align:right;margin:8px 0;font-variant-numeric:tabular-nums}
+.termcount b{color:var(--red-deep)}
+.masterline{display:flex;gap:9px;align-items:center;font-size:13px;color:var(--ink-soft);border:1.5px dashed var(--ink-faint);border-radius:4px;padding:9px 12px;margin-bottom:10px;cursor:pointer;background:#fbf7ee}
+.cap-task{border:1.5px solid var(--paper3);border-radius:5px;padding:14px;margin-bottom:14px;background:#fbf7ee;position:relative}
+.cap-task.done{border-color:var(--green);background:rgba(46,107,79,.06)}
+.cap-task h4{font-size:13.5px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.cap-task h4 .tick{margin-left:auto;color:var(--green);font-weight:700;font-size:12px;display:none}
+.cap-task.done h4 .tick{display:inline}
+.cap-word{font-family:var(--kai);font-size:26px;letter-spacing:6px;text-align:center;padding:12px 6px;margin-bottom:10px;color:var(--ink);user-select:none;
+  background:repeating-linear-gradient(7deg,transparent 0 9px,rgba(192,39,29,.13) 9px 10px),repeating-linear-gradient(-13deg,transparent 0 13px,rgba(43,74,159,.12) 13px 14px),#f2ecdd;border-radius:4px}
+.cap-word span{display:inline-block}
+.cap-opts{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
+@media(max-width:420px){.cap-opts{grid-template-columns:repeat(2,1fr)}}
+.cap-opt{border:1.5px solid var(--ink-faint);border-radius:4px;padding:9px 4px;text-align:center;font-size:13.5px;cursor:pointer;background:#fffdf6;transition:.12s}
+.cap-opt.on{border-color:var(--red);background:rgba(192,39,29,.1);color:var(--red-deep);font-weight:700}
+.cap-slider{position:relative;height:44px;border-radius:22px;background:var(--paper2);border:1.5px solid var(--ink-faint);overflow:hidden;touch-action:none}
+.cap-slider .fillbar{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,rgba(192,39,29,.25),rgba(192,39,29,.45))}
+.cap-slider .txt{position:absolute;inset:0;display:grid;place-items:center;font-size:12.5px;color:var(--ink-soft);pointer-events:none}
+.cap-slider .handle{position:absolute;left:0;top:0;bottom:0;width:52px;background:linear-gradient(180deg,#cf3527,var(--red-deep));border-radius:22px;display:grid;place-items:center;color:#fdf6ea;cursor:grab;box-shadow:2px 0 8px rgba(0,0,0,.25);touch-action:none}
+.cap-slider.ok .handle{background:linear-gradient(180deg,#3c8563,var(--green))}
+.cap-msg{font-size:12px;color:var(--red-deep);margin-top:7px;min-height:16px}
+.patience{display:flex;flex-direction:column;align-items:center;gap:12px;padding:10px 0}
+.pat-ring{position:relative;width:150px;height:150px}
+.pat-ring svg{transform:rotate(-90deg)}
+.pat-ring .num{position:absolute;inset:0;display:grid;place-items:center;font-size:34px;font-weight:700;color:var(--red-deep);font-variant-numeric:tabular-nums;font-family:var(--serif)}
+.pat-note{font-size:12.5px;color:var(--ink-soft);text-align:center;line-height:1.8}
+.copytarget{font-family:var(--kai);font-size:16.5px;line-height:2.1;background:#fbf7ee;border:1.5px solid var(--paper3);border-radius:4px;padding:12px 14px;margin-bottom:10px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.copytarget span{border-bottom:1px dotted transparent}
+.copytarget span.bad{color:var(--red-deep);background:rgba(192,39,29,.16);border-bottom:1px solid var(--red)}
+.copytarget span.ok{color:var(--green)}
+.summary{border:1.5px solid var(--paper3);border-radius:5px;background:#fbf7ee;padding:6px 14px;margin-bottom:14px}
+.summary .sr{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--paper3);font-size:13.5px}
+.summary .sr:last-child{border-bottom:none}
+.summary .sr b{color:var(--red-deep);font-variant-numeric:tabular-nums;text-align:right}
+.bottombar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:linear-gradient(180deg,rgba(51,44,37,.94),rgba(38,32,26,.98));-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);padding:10px 14px calc(10px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(0,0,0,.35)}
+.bottombar .in{max-width:680px;margin:0 auto;display:flex;gap:10px;align-items:center}
+.bottombar .btn{flex:1}
+.bottombar .btn-prev{flex:0 0 auto;padding:11px 14px}
+.fill-foot{max-width:680px;margin:14px auto 0;text-align:center;font-size:11px;color:#b7a98f;line-height:1.8}
+.fill-foot button{background:none;border:none;color:#cdbfa8;text-decoration:underline;font-size:11px;cursor:pointer}
+/* ---------- 印章 / 覆盖层 ---------- */
+.stamp{filter:url(#roughF);opacity:.92;pointer-events:none}
+#ovl{position:fixed;inset:0;z-index:100;pointer-events:none}
+.ovl-block{position:absolute;inset:0;background:var(--scrim);display:grid;place-items:center;pointer-events:auto;padding:20px}
+.wipe-stamp{border:5px double var(--red);border-radius:8px;color:var(--red);padding:14px 34px;text-align:center;transform:rotate(-14deg);background:rgba(247,242,231,.92);box-shadow:0 10px 40px rgba(0,0,0,.4);animation:stampIn .5s cubic-bezier(.2,1.6,.4,1)}
+.wipe-stamp.bl{border-color:#4a0d08;color:#4a0d08}
+.blpaper{position:relative}
+.blpaper .doc-head{padding-right:126px}
+.bl-seal{position:absolute;right:16px;top:12px;width:112px;height:112px;border:4px double rgba(150,23,15,.75);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transform:rotate(-16deg);color:rgba(150,23,15,.85);font-family:var(--serif);pointer-events:none}
+.bl-seal b{font-size:30px;letter-spacing:8px;text-indent:8px}
+.bl-seal span{font-size:8.5px;letter-spacing:1px}
+.blcount{font-size:24px;color:var(--red);font-variant-numeric:tabular-nums;letter-spacing:1px}
+.blstrip{margin-top:12px;border:1px solid rgba(192,39,29,.55);background:rgba(192,39,29,.09);border-radius:6px;padding:9px 12px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--ink)}
+.blstrip b{color:var(--red)}
+.blstrip-act{display:flex;align-items:center;gap:8px;font-variant-numeric:tabular-nums}
+.blstrip-act button{border:1px solid rgba(192,39,29,.55);background:transparent;color:var(--red);border-radius:4px;padding:3px 9px;font-size:11.5px;cursor:pointer}
+.blstrip-act button:hover{background:rgba(192,39,29,.12)}
+@media(max-width:640px){.bl-seal{width:84px;height:84px;right:10px;top:10px}.bl-seal b{font-size:22px;letter-spacing:5px;text-indent:5px}.blcount{font-size:20px}.blpaper .doc-head{padding-right:96px}}
+.wipe-stamp b{display:block;font-family:var(--serif);font-size:52px;letter-spacing:16px;font-weight:700;text-indent:16px}
+.wipe-stamp span{font-size:12px;letter-spacing:4px}
+@keyframes stampIn{0%{transform:rotate(-14deg) scale(2.6);opacity:0}60%{transform:rotate(-14deg) scale(.94);opacity:1}100%{transform:rotate(-14deg) scale(1)}}
+.paper.quake{animation:quake .5s}
+@keyframes quake{0%,100%{transform:translate(0)}15%{transform:translate(-8px,3px) rotate(-.6deg)}35%{transform:translate(7px,-4px) rotate(.5deg)}55%{transform:translate(-5px,2px)}75%{transform:translate(4px,-2px)}}
+.loadbox{width:min(420px,92vw);background:var(--paper);border-radius:6px;padding:24px;box-shadow:0 16px 50px rgba(0,0,0,.5)}
+.loadbox h3{font-family:var(--serif);color:var(--red-deep);letter-spacing:2px;font-size:17px;text-align:center;margin-bottom:14px}
+.loadlog{font-size:12.5px;color:var(--ink-soft);line-height:2.1;min-height:150px;font-variant-numeric:tabular-nums}
+.loadlog .ok{color:var(--green)}
+.loadbar{height:8px;border-radius:4px;background:var(--paper2);overflow:hidden;margin-top:12px}
+.loadbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red-deep),var(--red));transition:width .5s}
+.modalbox{width:min(440px,92vw);background:var(--paper);border-radius:6px;padding:20px;box-shadow:0 16px 50px rgba(0,0,0,.5)}
+.modalbox h3{font-family:var(--serif);color:var(--red-deep);font-size:16px;letter-spacing:1px;margin-bottom:10px}
+.modalbox textarea{min-height:150px;font-family:var(--sans);font-size:13px;color:var(--ink)}
+.modalbox .btn{margin-top:12px;width:100%}
+/* ---------- 部署向导 ---------- */
+.guidebox{width:min(780px,94vw);max-height:86vh;overflow:auto;background:var(--paper);border-radius:6px;padding:22px 26px 26px;box-shadow:0 16px 50px rgba(0,0,0,.5);position:relative}
+.guidebox h3{font-family:var(--serif);color:var(--red-deep);font-size:18px;letter-spacing:2px;margin-bottom:4px}
+.guidebox .gsub{font-size:12px;color:var(--ink-soft);margin-bottom:12px;line-height:1.8}
+.gclose{position:absolute;top:12px;right:12px;width:30px;height:30px;border:1.5px solid var(--ink-faint);background:#fffdf6;border-radius:4px;cursor:pointer;color:var(--ink-soft);font-size:15px;line-height:1}
+.gclose:hover{border-color:var(--red);color:var(--red-deep)}
+.gtabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}
+.gtab{border:1.5px solid var(--ink-faint);background:#fffdf6;border-radius:4px;padding:7px 12px;font-size:12.5px;cursor:pointer;color:var(--ink-soft);transition:.12s}
+.gtab:hover{border-color:var(--red)}
+.gtab.on{border-color:var(--red);background:rgba(192,39,29,.1);color:var(--red-deep);font-weight:700}
+.gsec h4{font-family:var(--serif);font-size:14.5px;color:var(--ink);letter-spacing:1px;margin:4px 0 8px}
+.gstep{display:flex;gap:10px;margin:9px 0;font-size:13px;line-height:1.8;color:var(--ink)}
+.gstep em{flex:0 0 22px;height:22px;border-radius:50%;background:var(--red);color:#fdf6ea;font-style:normal;display:grid;place-items:center;font-size:12px;font-weight:700;margin-top:3px}
+.gstep b{color:var(--red-deep)}
+.gcode{position:relative;background:#2b2620;color:#e8dcc4;border-radius:5px;padding:12px 64px 12px 14px;font-family:Consolas,Menlo,monospace;font-size:12px;line-height:1.75;white-space:pre-wrap;word-break:break-all;margin:8px 0}
+.gcode button{position:absolute;top:7px;right:7px;border:1px solid #6b5f4c;background:#3a332b;color:#e8dcc4;border-radius:3px;font-size:11px;padding:3px 9px;cursor:pointer}
+.gcode button:hover{border-color:var(--red);color:#fff}
+.gnote{font-size:12px;color:var(--ink-soft);background:rgba(165,114,28,.09);border-left:3px solid var(--amber);padding:8px 11px;border-radius:0 3px 3px 0;margin:10px 0;line-height:1.75}
+.gnote b{color:var(--amber)}
+.gfaq{border-top:1px dashed var(--paper3);margin-top:14px;padding-top:6px}
+.gfaq summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--red-deep);padding:7px 0;list-style:none}
+.gfaq summary::-webkit-details-marker{display:none}
+.gfaq summary::before{content:'＋ ';color:var(--amber)}
+.gfaq details[open] summary::before{content:'− '}
+.gfaq p{font-size:12.5px;color:var(--ink-soft);line-height:1.85;padding:0 0 9px 16px}
+.basestatus{font-size:11.5px;margin-top:5px;line-height:1.65}
+.basestatus.ok{color:var(--green)}
+.basestatus.warn{color:var(--amber)}
+.basestatus.bad{color:var(--red-deep)}
+@media(max-width:640px){.guidebox{padding:18px 16px 20px}.gtab{padding:6px 9px;font-size:12px}.miniacts{flex-wrap:wrap}.miniacts #a_guide{flex:1 1 100%}}
+/* ---------- 回执 ---------- */
+.receipt{text-align:center}
+.receipt .bigstamp{margin:6px auto 10px;width:150px;transform:rotate(-10deg);animation:stampIn .55s cubic-bezier(.2,1.6,.4,1)}
+.receipt h2{font-family:var(--serif);font-size:22px;letter-spacing:3px;color:var(--red-deep);margin-bottom:4px}
+.receipt .rno{font-size:13px;color:var(--ink-soft);margin-bottom:14px;font-variant-numeric:tabular-nums}
+.queuecard{border:2px solid var(--red);border-radius:6px;padding:16px;margin:0 auto 14px;max-width:400px;background:rgba(192,39,29,.05)}
+.queuecard .q{font-size:15px;color:var(--ink)}
+.queuecard .q b{font-size:34px;color:var(--red-deep);font-family:var(--serif);padding:0 4px}
+.queuecard .eta{font-size:13px;color:var(--ink-soft);margin-top:8px}
+.queuecard .eta b{color:var(--red-deep)}
+.rtips{text-align:left;font-size:12.5px;color:var(--ink-soft);line-height:2;max-width:420px;margin:0 auto 16px}
+.rtips b{color:var(--red-deep)}
+.racts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.smallprint{font-size:11px;color:var(--ink-faint);line-height:1.9;border-top:1px dashed var(--paper3);padding-top:12px;max-width:460px;margin:0 auto}
+/* ---------- toast ---------- */
+#toasts{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;width:min(430px,92vw);pointer-events:none}
+.toast{background:var(--paper);border-left:4px solid var(--red);border-radius:4px;box-shadow:0 8px 26px rgba(0,0,0,.4);padding:11px 14px;font-size:12.5px;line-height:1.65;color:var(--ink);animation:toastIn .3s ease}
+.toast.ok{border-left-color:var(--green)}
+.toast.warn{border-left-color:var(--amber)}
+.toast b{color:var(--red-deep)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
+.toast.out{opacity:0;transform:translateY(-10px);transition:.3s}
+@media(max-width:640px){
+  #app{padding:10px 10px 96px}
+  .paper{padding:20px 16px 24px}
+  .brand h1{font-size:15px;letter-spacing:1px}
+  .statstrip{grid-template-columns:repeat(2,1fr)}
+  .doc-org{letter-spacing:3px}
+  .fill-top{margin:-10px -10px 12px}
+  .sndbtn span{display:none}
+  .sndbtn{padding:7px 9px}
+  .exitbtn{padding:6px 10px;font-size:11px;white-space:nowrap}
+  .scorechip{font-size:10.5px;padding:3px 8px}
+  .fill-top .row1 .t{font-size:12px;letter-spacing:.5px}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<filter id="roughF"><feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.6"/></filter>
+</defs></svg>
+<main id="app"></main>
+<div id="toasts" aria-live="polite"></div>
+<div id="ovl"></div>
+<noscript><p style="color:#efe6d3;text-align:center;padding:30px">本系统需要启用 JavaScript 才能运行。</p></noscript>
+<script>
+(function(){
+'use strict';
+/* ================= 工具 ================= */
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function rnd(a,b){return a+Math.random()*(b-a)}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function pad(n,l){n=String(n);while(n.length<l)n='0'+n;return n}
+function today(){var d=new Date();return ''+d.getFullYear()+pad(d.getMonth()+1,2)+pad(d.getDate(),2)}
+function money(n){return '￥'+Number(n||0).toLocaleString('zh-CN')}
+var store={
+  get:function(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
+  set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
+  del:function(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+function encCfg(c){
+  var o={v:1,name:c.name,amount:c.amount,level:c.level,terms:c.terms,wipe:c.wipe,essay:c.essay,witness:c.witness,queue:c.queue,copyPen:c.copyPen,patience:c.patience,boss:c.boss};
+  var j=JSON.stringify(o),b=new TextEncoder().encode(j),s='';
+  for(var i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);
+  return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decCfg(str){
+  try{
+    var s=str.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';
+    var bin=atob(s),b=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);
+    var o=JSON.parse(new TextDecoder().decode(b));
+    if(!o||o.v!==1)return null;return o;
+  }catch(e){return null}
+}
+/* ================= 音效 ================= */
+var AC=null,soundOn=store.get('jtq_snd')!==false;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC&&AC.state==='suspended')AC.resume()}catch(e){}return AC}
+function tone(f,d,type,v,delay,fEnd){
+  if(!soundOn)return;var c=ac();if(!c)return;
+  try{
+    var t=c.currentTime+(delay||0),o=c.createOscillator(),g=c.createGain();
+    o.type=type||'sine';o.frequency.setValueAtTime(f,t);
+    if(fEnd)o.frequency.exponentialRampToValueAtTime(fEnd,t+d);
+    g.gain.setValueAtTime(v||.1,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.02);
+  }catch(e){}
+}
+function thud(){
+  if(!soundOn)return;var c=ac();if(!c)return;
+  try{
+    var t=c.currentTime,len=c.sampleRate*.13,buf=c.createBuffer(1,len,c.sampleRate),d=buf.getChannelData(0);
+    for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);
+    var src=c.createBufferSource();src.buffer=buf;
+    var f=c.createBiquadFilter();f.type='lowpass';f.frequency.value=320;
+    var g=c.createGain();g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.14);
+    src.connect(f);f.connect(g);g.connect(c.destination);src.start(t);
+    tone(95,.2,'sine',.3,0,48);
+  }catch(e){}
+}
+var S={
+  tick:function(){tone(1500,.045,'square',.045)},
+  err:function(){tone(210,.14,'sawtooth',.07);tone(150,.16,'sawtooth',.06,.09)},
+  ok:function(){tone(660,.1,'sine',.1);tone(880,.16,'sine',.1,.1)},
+  stamp:function(){thud()},
+  wipe:function(){thud();tone(320,.35,'sawtooth',.05,.05,110)}
+};
+document.addEventListener('pointerdown',function(){ac()},{once:true});
+function sndBtnHTML(){return '<button class="sndbtn" id="sndBtn" type="button" aria-label="音效开关" aria-pressed="'+soundOn+'">'+(soundOn?icoSndOn():icoSndOff())+'<span>音效：'+(soundOn?'开':'关')+'</span></button>'}
+function bindSnd(root){
+  var b=$('#sndBtn',root);if(!b)return;
+  b.onclick=function(){soundOn=!soundOn;store.set('jtq_snd',soundOn);b.innerHTML=(soundOn?icoSndOn():icoSndOff())+'<span>音效：'+(soundOn?'开':'关')+'</span>';b.setAttribute('aria-pressed',soundOn);if(soundOn)S.tick()};
+}
+function icoSndOn(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9.4 9.4 0 0 1 0 13"/></svg>'}
+function icoSndOff(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor" stroke="none"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>'}
+function ico(name){
+  var p={copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+    link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+    play:'<path d="M6 4.5v15l13-7.5z" fill="currentColor" stroke="none"/>',
+    dice:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.4" fill="currentColor" stroke="none"/>',
+    reset:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>',
+    doc:'<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 13h7M9 17h7"/>',
+    back:'<path d="M15 5l-7 7 7 7"/>',next:'<path d="M9 5l7 7-7 7"/>'}[name]||'';
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+p+'</svg>';
+}
+/* ================= toast / 复制 ================= */
+function toast(msg,kind){
+  var box=$('#toasts'),t=document.createElement('div');
+  t.className='toast'+(kind?' '+kind:'');t.innerHTML=msg;box.appendChild(t);
+  while(box.children.length>3)box.removeChild(box.firstChild);
+  setTimeout(function(){t.classList.add('out');setTimeout(function(){t.remove()},350)},3600);
+}
+function copyText(t,okMsg){
+  function done(ok){if(ok){S.ok();toast(okMsg||'已复制，去微信里粘贴发送吧。','ok')}else manualCopy(t)}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(function(){done(true)},function(){fallback()})}
+  else fallback();
+  function fallback(){
+    try{var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.focus();ta.select();var ok=document.execCommand('copy');ta.remove();done(ok)}catch(e){done(false)}
+  }
+}
+function manualCopy(t){
+  var o=$('#ovl'),d=document.createElement('div');d.className='ovl-block';
+  d.innerHTML='<div class="modalbox"><h3>请手动复制</h3><p style="font-size:12px;color:var(--ink-soft);margin-bottom:8px">当前环境不允许自动写入剪贴板，请全选下方文本后复制。</p><textarea readonly></textarea><button class="btn btn-primary" type="button">关闭</button></div>';
+  o.appendChild(d);var ta=$('textarea',d);ta.value=t;ta.focus();ta.select();
+  $('.btn',d).onclick=function(){d.remove()};
+  d.addEventListener('click',function(e){if(e.target===d)d.remove()});
+}
+/* ================= 数据 ================= */
+var CLAUSES=[
+'借款到账后，借款人须立即发送"感谢大爷"表情包一枚，且不得撤回。',
+'借款人须将出借人微信备注改为"恩人（借钱必还版）"，并截图存证。',
+'还款日前 30 天起，借款人须每日 06:00 前向出借人发送早安问候，风雨无阻。',
+'出借人有权在心情不好、心情太好、做梦梦到钱时要求提前还款，借款人须在 24 小时内响应。',
+'借款期间，借款人朋友圈不得设置"三天可见"；发布美食、旅游、新鞋照片视为具备还款能力，须于当日还款。',
+'逾期利息按出借人当日心情浮动，上不封顶，下不保底。',
+'借款人须承认：借钱的是孙子，出借的是大爷（仅限本协议语境）。',
+'本协议解释权、修订权、追加权归出借人所有，出借人可随时单方面补充条款。',
+'借款人不得失联、换号、换头像至出借人认不出，违者视为恶意逃债。',
+'还款须使用崭新连号纸币，冠字号码须含数字 8，拒收钢镚。',
+'借款期间微信签名须改为"努力搬砖，早日还钱"，还清后方可恢复。',
+'出借人每条朋友圈，借款人须在 3 分钟内点赞并附不少于 20 字真诚评论。',
+'借款人承诺借款期间不购买奶茶、游戏皮肤、演唱会门票等非必需品，违者按消费金额十倍优先偿还。',
+'借款人若中彩票，奖金优先用于还款；若没中，视为还款意愿不诚，诚意分 -20。',
+'借款人结婚，礼金优先还款；离婚，礼金同样优先还款；不婚，工资优先还款。',
+'本协议有效期自签署之日起，至宇宙热寂或还清之日止，以较晚者为准。',
+'借款人须每季度提交手写《还款决心书》一份，不少于 800 字，字迹工整，不得涂改。',
+'出借人发"在吗"，借款人须在 60 秒内回复"在的，您说"，超时按次计违约金。',
+'借款人不得在出借人面前哭穷，也不得炫富，须保持"刚好还得起"的精准状态。',
+'还款当日，借款人须沐浴更衣，心怀感恩，转账备注"完璧归赵"。',
+'借款人同意出借人将本协议截图发朋友圈炫耀，但不得打码出借人昵称。',
+'若借款人先于出借人换手机，须在新手机第一时间置顶出借人聊天。',
+'借款人梦见出借人时，须在梦中提醒出借人收款，醒来补发问候。',
+'本协议一式两份，出借人执两份，借款人执零份，但须全文背诵。',
+'借款人授权出借人在其婚礼上播放本协议朗读版（如有婚礼）。',
+'借款人不得以"最近手头紧"为由申请展期，因为借的时候手头也紧。',
+'还款进度须每周汇报，格式：尊敬的恩人，本周搬砖 X 小时，距还清还差 Y 元。',
+'借款人同意：出借人的"随便"意为"立刻"，"不急"意为"今天之内"。',
+'本协议未尽事宜，由出借人临时起意决定。',
+'借款人确认：填完本承诺书仍未放弃的，视为对出借人是真爱，出借人可考虑请其吃一顿沙县小吃（还款照常）。'
+];
+var WIPE_REASONS=[
+'检测到填写环境异常（微信版本过高），本环节已清空，请重新填写。',
+'您填写速度过快，疑似代填机器人，本环节已重置。',
+'风控提示：您刚才犹豫了 3.2 秒，借款诚意存疑，本环节已清空。',
+'系统检测到错别字（具体位置保密），根据《严谨性条例》本环节已清空。',
+'网络波动，您填写的数据已丢失（本地也没有备份）。',
+'出借人刚刚更新了条款版本，旧版表单作废，请重新填写。',
+'检测到您叹了一口气，情绪稳定性不达标，本环节已重置。',
+'本环节随机抽查未通过（抽查标准随机生成），请重新填写。'
+];
+var NOTICE=[
+'一、本系统仅受理"确实很急但说不清哪里急"之借款申请；用途为"就是想借"者，建议直接放弃。',
+'二、申请人须如实填写全部环节，任何空项、错项、敷衍项均视为自动放弃；放弃者可获得出借人点赞一枚。',
+'三、填写过程中，系统可能因风控需要清空已填内容，申请人须保持情绪稳定；辱骂系统者，诚意分清零。',
+'四、本承诺书之解释权、修改权、追加权、最终反悔权，均归出借人所有。',
+'五、提交成功不代表借款成功，仅代表您获得排队资格；排队资格不代表排队，排队不代表受理。',
+'六、排队期间请勿催问：催问一次后退 100 位，两次后退 500 位，三次进入黑名单候选池。',
+'七、申请人须保证填写期间电量充足、心态平和、手速稳定，因手抖造成的错字由申请人自行承担。',
+'八、姓名、手机号、身份证号均须通过合理性核验（位数、号段、地区码、出生日期、校验位），乱填一律驳回；抄写与大段说明须逐字手动键入，系统全程监测复制、粘贴、拖拽、自动填充与整段代写行为，违者当场驳回、清空并扣分。',
+'九、本系统所有数据仅保存于您的本机浏览器，不上传、不联网、不收集，出借人也看不到您填了什么——但流程的威严不受影响。',
+'十、阅读本须知须逐字进行，监测到跳读、秒读、边读边骂等行为将重置阅读进度。',
+'十一、诚意分归零即终止：诚意分扣至 0 时，申请立即终止、已填内容全部作废，并将本设备拉黑——地狱模式 7 天、标准模式 1 天、温和模式 1 小时；拉黑期内通过任何链接发起的申请均不予受理。',
+'十二、读到这里说明您很有耐心。可惜，后面还有很长的路。'
+];
+var COPY_TEXTS=[
+'本人郑重承诺：所借款项用于正当用途，绝不用于奶茶、游戏及一切让出借人看着不爽的消费；保证按时还款，绝不失联、绝不装死、绝不在朋友圈岁月静好；如有违反，自愿接受出借人一切合理及不合理的安排。',
+'本人补充承诺：以上承诺长期有效，不因换手机、换工作、换心情而失效；出借人永远是对的，如有异议，参照前句执行。'
+];
+var CAP_WORD='黑化肥发灰会挥发';
+var CAP_OPTS=[['人民币',1],['馒头',0],['银子',1],['空气',0],['盘缠',1],['加班费',1],['西北风',0],['钢镚',1]];
+var REL_OPTS=['发小 / 老同学','前同事','现任同事','网友','点赞之交','仅存在于通讯录','想不起来了'];
+var WEAK_REL={'点赞之交':1,'仅存在于通讯录':1,'想不起来了':1};
+var USE_OPTS=['资金周转','突发急事','看病就医','偿还其他债务','消费升级','说不清楚'];
+var RISKY_USE={'偿还其他债务':'检测到以贷养贷，风险等级：极高。请更换用途，或再次提交以强行继续（将备注高风险）。','消费升级':'本通道不支持为快乐付费。请重新选择，或再次提交以强行继续（将备注高风险）。','说不清楚':'用途说不清楚，涉嫌蒙混过关。请重新选择，或再次提交以强行继续。'};
+var LEVELS={
+  warm:{label:'温和劝退',terms:8,wipe:0,essay:100,witness:0,copyPen:false,patience:false,cap:0},
+  std:{label:'标准劝退',terms:15,wipe:35,essay:300,witness:2,copyPen:true,patience:false,cap:2},
+  hell:{label:'地狱模式',terms:30,wipe:70,essay:800,witness:3,copyPen:true,patience:true,cap:3}
+};
+var DEFAULTS={name:'老铁',amount:2000,level:'std',terms:15,wipe:35,essay:300,witness:2,queue:4096,copyPen:true,patience:false,boss:'你大爷',base:''};
+/* ================= 印章 ================= */
+var stampSeq=0;
+function stampSVG(org,center,bottom,size){
+  stampSeq++;var id='starc'+stampSeq;
+  return '<svg class="stamp" width="'+size+'" height="'+size+'" viewBox="0 0 120 120" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true">'+
+  '<circle cx="60" cy="60" r="56" fill="none" stroke="#c0271d" stroke-width="3.5"/>'+
+  '<circle cx="60" cy="60" r="51" fill="none" stroke="#c0271d" stroke-width="1"/>'+
+  '<defs><path id="'+id+'" d="M 16,64 A 44,44 0 0 1 104,64" fill="none"/></defs>'+
+  '<text fill="#c0271d" font-size="11.5" font-weight="700" letter-spacing="1.5" font-family="SimSun,serif"><textPath href="#'+id+'" xlink:href="#'+id+'" startOffset="50%" text-anchor="middle">'+esc(org)+'</textPath></text>'+
+  '<path d="M60 38 l5.9 12 13.2 1.9 -9.5 9.3 2.2 13.1 -11.8-6.2 -11.8 6.2 2.2-13.1 -9.5-9.3 13.2-1.9 z" fill="#c0271d"/>'+
+  (center?'<text x="60" y="86" text-anchor="middle" fill="#c0271d" font-size="17" font-weight="700" font-family="SimSun,serif" letter-spacing="3">'+esc(center)+'</text>':'')+
+  '<text x="60" y="'+(center?101:92)+'" text-anchor="middle" fill="#c0271d" font-size="9.5" letter-spacing="1" font-family="SimSun,serif">'+esc(bottom)+'</text></svg>';
+}
+/* ================= 聊天文本 ================= */
+function buildChatText(c){
+  var L=[];
+  L.push('【个人借款申请暨承诺书】');
+  L.push('编号：JK-'+today()+'-'+pad(Math.floor(Math.random()*10000),4));
+  L.push('申请人：'+c.name+'　申请金额：'+money(c.amount));
+  L.push('出借人：'+c.boss);
+  L.push('');
+  L.push('一、基本信息（逐项填写，不得空项）');
+  L.push('1. 姓名：＿＿＿＿（须与身份证一致，2–20 个汉字，乱填驳回）');
+  L.push('2. 手机号：＿＿＿＿（11 位，号段须真实有效，顺子号视为乱填）');
+  L.push('3. 身份证号：＿＿＿＿（18 位，核验地区码、出生日期与校验位，编造驳回）');
+  L.push('4. 与出借人关系：＿＿＿＿（填"好朋友"须附三年内聊天记录佐证）');
+  L.push('5. 认识年限：＿＿＿＿ 年');
+  L.push('6. 上一次非借钱联系的时间：＿＿＿＿');
+  L.push('7. 解释为什么平时不联系、一联系就借钱（不少于 30 字，逐字手写）：＿＿＿＿');
+  L.push('8. 出借人最爱吃的一道菜：＿＿＿＿（答错重新想）');
+  L.push('');
+  L.push('二、借款用途说明（不少于 '+c.essay+' 字，可另附页）');
+  L.push('＿＿＿＿');
+  L.push('');
+  L.push('三、还款能力');
+  L.push('1. 月收入：＿＿＿＿（过高请找银行，过低请先搬砖）');
+  L.push('2. 列出另外 3 位可以借钱的对象，并说明为何不找他们：＿＿＿＿');
+  L.push('3. 承诺将工资流水打印装订（封面烫金）邮寄给出借人，邮费自理：是 / 否');
+  if(c.witness>0){L.push('4. 提供 '+c.witness+' 位见证人姓名及关系（系统会"抽查回访"）：＿＿＿＿')}
+  L.push('');
+  L.push('四、承诺条款（共 '+c.terms+' 条，请逐条回复"我已阅读并同意第 X 条"，不支持全选）');
+  for(var i=0;i<c.terms;i++)L.push((i+1)+'. '+CLAUSES[i]);
+  L.push('');
+  L.push('五、签署要求');
+  L.push('1. 所有抄写与长文本说明须逐字手动键入，禁止复制、粘贴、自动填充，系统全程监测，违者清空并扣分。');
+  if(c.copyPen)L.push('2. 将本承诺书全文手抄一遍，拍照发送；字迹潦草、有错字，视为放弃。');
+  if(c.patience)L.push('3. 完成 20 秒静置耐心测试（线上版），期间碰一下手机就重新计时。');
+  L.push('4. 任何空项、涂改、敷衍，均视为自动放弃。');
+  L.push('5. 提交后进入审核队列：当前排队约 '+c.queue+' 人，预计办结时间 2077 年第三季度。');
+  L.push('6. 本承诺书解释权、修改权、追加权、最终反悔权均归出借人所有。');
+  L.push('7. 诚意分归零即终止申请并拉黑本机：地狱 7 天 / 标准 1 天 / 温和 1 小时；拉黑期内任何链接发起的申请均不予受理。');
+  L.push('');
+  L.push('（填完这些还没放弃的，是真爱，我考虑请你吃沙县。还款照常。）');
+  return L.join('\n');
+}
+function openerText(c,withLink){
+  return '在的在的。最近手头也紧，不过我这边借钱现在都走线上流程了，很正规，你填一下这个借款承诺书，填完秒批（大概）：'+(withLink||'');
+}
+function calcStats(c){
+  var rate=clamp(Math.round(35+c.terms*1.2+c.wipe*.25+c.essay/40+c.witness*4+(c.copyPen?6:0)+(c.patience?8:0)),5,99);
+  var steps=stepPlan(c).length;
+  return {rate:rate,steps:steps};
+}
+function stepPlan(c){
+  var ids=['notice','basic','relation','purpose','ability','terms','captcha'];
+  if(c.witness>0)ids.push('witness');
+  if(c.level!=='warm')ids.push('reconf');
+  if(c.patience)ids.push('patience');
+  if(c.copyPen)ids.push('copy');
+  ids.push('submit');
+  return ids;
+}
+/* ================= 起草台 ================= */
+var cfg=Object.assign({},DEFAULTS);
+var app=$('#app');
+function renderOwner(){
+  document.title='劝退式借款承诺书生成器 · 赛博信贷风控中心';
+  app.innerHTML=
+  '<div class="topbar"><div class="brand"><div class="brand-seal">贷</div><h1>赛博信贷风控中心<small>个人借款申请暨承诺书 · 文件起草台 V9.9.9</small></h1></div><div class="sp"></div>'+sndBtnHTML()+'</div>'+
+  '<div class="owner-grid"><div class="owner-left"><section class="paper" aria-label="配置台">'+
+    '<div class="panel-h"><b>劝退参数配置台</b><span>改动即刻生效</span></div>'+
+    '<div class="ctrl-row">'+
+      '<div class="ctrl"><label for="c_name">对方称呼</label><input type="text" id="c_name" maxlength="12" value="'+esc(cfg.name)+'" placeholder="如：老铁"></div>'+
+      '<div class="ctrl"><label for="c_boss">出借人署名</label><input type="text" id="c_boss" maxlength="12" value="'+esc(cfg.boss)+'" placeholder="如：你大爷"></div>'+
+    '</div>'+
+    '<div class="ctrl-row">'+
+      '<div class="ctrl"><label for="c_amount">借款金额（元）</label><input type="number" id="c_amount" min="1" max="9999999" value="'+cfg.amount+'"></div>'+
+      '<div class="ctrl"><label for="c_queue">终审排队人数</label><input type="number" id="c_queue" min="1" max="999999" value="'+cfg.queue+'"></div>'+
+    '</div>'+
+    '<div class="ctrl"><label>劝退强度</label><div class="seg" id="c_level" role="group" aria-label="劝退强度">'+
+      '<button type="button" data-lv="warm">温和劝退</button><button type="button" data-lv="std">标准劝退</button><button type="button" data-lv="hell">地狱模式</button></div>'+
+      '<div class="hint">切换强度会套用预设，下方参数仍可单独微调。</div>'+
+      '<div class="hint">诚意分归零：立即终止申请并拉黑本机 —— 地狱 7 天 / 标准 1 天 / 温和 1 小时。</div></div>'+
+    '<div class="ctrl"><label for="c_terms">霸王条款数量 <output id="v_terms">'+cfg.terms+' 条</output></label><input type="range" id="c_terms" min="5" max="30" step="1" value="'+cfg.terms+'"></div>'+
+    '<div class="ctrl"><label for="c_wipe">自动清空概率 <output id="v_wipe">'+cfg.wipe+'%</output></label><input type="range" id="c_wipe" min="0" max="100" step="5" value="'+cfg.wipe+'"><div class="hint">填写中途随机盖章"作废"并清空当前环节，概率越高越劝退。</div></div>'+
+    '<div class="ctrl"><label for="c_essay">用途说明最少字数 <output id="v_essay">'+cfg.essay+' 字</output></label><input type="range" id="c_essay" min="100" max="1000" step="50" value="'+cfg.essay+'"></div>'+
+    '<div class="ctrl"><label>见证人数量（会被随机"回访不合格"）</label><div class="stepper"><button type="button" id="w_minus" aria-label="减少见证人">−</button><output id="v_witness">'+cfg.witness+'</output><button type="button" id="w_plus" aria-label="增加见证人">＋</button></div></div>'+
+    '<div class="togglerow"><span>手写抄录环节<small>逐字抄写承诺书，错一字重来</small></span><label class="switch"><input type="checkbox" id="c_copy"'+(cfg.copyPen?' checked':'')+'><i></i></label></div>'+
+    '<div class="togglerow"><span>静置耐心测试<small>20 秒不许碰手机，碰了重新计时</small></span><label class="switch"><input type="checkbox" id="c_patience"'+(cfg.patience?' checked':'')+'><i></i></label></div>'+
+    '<div class="statstrip" aria-live="polite">'+
+      '<div class="stat"><b id="s_rate">--</b><span>预计劝退成功率</span></div>'+
+      '<div class="stat"><b id="s_steps">--</b><span>审查环节数</span></div>'+
+      '<div class="stat"><b id="s_words">--</b><span>聊天版字数</span></div>'+
+      '<div class="stat"><b id="s_silence">--</b><span>预计对方沉默</span></div>'+
+    '</div>'+
+    '<div class="blstrip" id="blStrip" hidden><div><b>本机处于拉黑期</b> <span id="blStripMsg"></span></div><div class="blstrip-act"><span id="blStripTime"></span><button id="blClear" type="button">解除（调试）</button></div></div>'+
+    '<div class="actdock"><div class="actions">'+
+      '<button class="btn btn-primary" id="a_copy_chat" type="button">'+ico('copy')+'复制聊天版承诺书</button>'+
+      '<button class="btn btn-primary" id="a_play" type="button">'+ico('play')+'立即试玩全流程</button>'+
+      '<button class="btn btn-ghost" id="a_link" type="button">'+ico('link')+'生成分享链接</button>'+
+      '<button class="btn btn-paper" id="a_copy_open" type="button">'+ico('doc')+'复制开场白</button>'+
+    '</div>'+
+    '<div class="miniacts"><button id="a_guide" type="button">部署教程 · 地址怎么来</button><button id="a_rand" type="button">随机一套缺德配置</button><button id="a_reset" type="button">恢复默认配置</button></div></div>'+
+    '<div class="ctrl" style="margin-top:12px"><label for="c_base">部署地址（生成外链用，可留空）</label><input type="text" id="c_base" value="'+esc(cfg.base)+'" placeholder="https://你的域名/index.html"><div class="hint">先把本 HTML 上传到任意静态托管（步骤见「部署教程」），再填上传后的访问地址；若本页已从线上地址打开，留空即自动使用当前网址。</div><div class="basestatus" id="baseStatus"></div></div>'+
+    '<div class="linkrow"><input type="text" id="linkOut" readonly placeholder="点击「生成分享链接」后在此显示" aria-label="分享链接"><button class="btn btn-ghost" id="a_test_link" type="button" style="flex:none">自测</button><button class="btn btn-ghost" id="a_copy_link" type="button" style="flex:none">复制</button></div>'+
+    '<div class="linkhint" id="linkHint"></div>'+
+  '</section></div>'+
+  '<div class="owner-right"><div class="tabs" role="tablist"><button class="on" id="tab_chat" type="button" role="tab" aria-selected="true">聊天文本版（免部署）</button><button id="tab_doc" type="button" role="tab" aria-selected="false">红头文件预览</button></div>'+
+  '<section class="paper tilt" style="border-radius:0 4px 4px 4px" aria-label="预览">'+
+    '<div id="p_chat"><div class="chatpre" id="chatPre"></div></div>'+
+    '<div id="p_doc" hidden><div class="docmini" id="docPrev"></div></div>'+
+  '</section></div></div>';
+  bindSnd(app);
+  // 控件绑定
+  $('#c_name').addEventListener('input',function(){cfg.name=this.value.trim()||'朋友';updateOwner()});
+  $('#c_boss').addEventListener('input',function(){cfg.boss=this.value.trim()||'出借人';updateOwner()});
+  $('#c_amount').addEventListener('input',function(){cfg.amount=clamp(parseInt(this.value)||0,1,9999999);updateOwner()});
+  $('#c_queue').addEventListener('input',function(){cfg.queue=clamp(parseInt(this.value)||0,1,999999);updateOwner()});
+  $('#c_base').addEventListener('input',function(){cfg.base=this.value.trim();$('#linkOut').value='';$('#linkHint').textContent='';updateBaseStatus()});
+  $('#a_guide').onclick=function(){S.tick();openGuide()};
+  $('#a_test_link').onclick=function(){
+    var v=$('#linkOut').value;
+    if(!v){toast('请先点击「生成分享链接」，再自测。','warn');S.err();return}
+    S.ok();window.open(v,'_blank');
+    toast('已在新窗口打开分享链接：对方看到的就是填写流程（起草台仅本机可见）。','ok');
+  };
+  $$('#c_level button').forEach(function(b){b.onclick=function(){
+    cfg.level=b.dataset.lv;var p=LEVELS[cfg.level];
+    cfg.terms=p.terms;cfg.wipe=p.wipe;cfg.essay=p.essay;cfg.witness=p.witness;cfg.copyPen=p.copyPen;cfg.patience=p.patience;
+    S.tick();syncControls();updateOwner();
+  }});
+  $('#c_terms').addEventListener('input',function(){cfg.terms=+this.value;$('#v_terms').textContent=cfg.terms+' 条';updateOwner()});
+  $('#c_wipe').addEventListener('input',function(){cfg.wipe=+this.value;$('#v_wipe').textContent=cfg.wipe+'%';updateOwner()});
+  $('#c_essay').addEventListener('input',function(){cfg.essay=+this.value;$('#v_essay').textContent=cfg.essay+' 字';updateOwner()});
+  $('#w_minus').onclick=function(){cfg.witness=clamp(cfg.witness-1,0,3);$('#v_witness').textContent=cfg.witness;S.tick();updateOwner()};
+  $('#w_plus').onclick=function(){cfg.witness=clamp(cfg.witness+1,0,3);$('#v_witness').textContent=cfg.witness;S.tick();updateOwner()};
+  $('#c_copy').addEventListener('change',function(){cfg.copyPen=this.checked;S.tick();updateOwner()});
+  $('#c_patience').addEventListener('change',function(){cfg.patience=this.checked;S.tick();updateOwner()});
+  $('#blClear').onclick=function(){store.del(blKey(false));store.del(blKey(true));S.tick();updateBlStrip();toast('本机拉黑记录已清除（仅调试用，对方设备不受影响）。','ok')};
+  $('#tab_chat').onclick=function(){switchTab('chat')};
+  $('#tab_doc').onclick=function(){switchTab('doc')};
+  $('#a_copy_chat').onclick=function(){copyText(buildChatText(cfg),'聊天版承诺书已复制（'+buildChatText(cfg).length+' 字），直接粘贴给对方。')};
+  $('#a_copy_open').onclick=function(){copyText(openerText(cfg),'开场白已复制，配合承诺书或链接食用。')};
+  $('#a_play').onclick=function(){S.ok();enterFill(Object.assign({},cfg),true)};
+  $('#a_rand').onclick=function(){
+    cfg.name=pick(['老铁','兄弟','姐妹','老同学','前同事','那位谁','大聪明']);
+    cfg.boss=pick(['你大爷','债主大人','恩人','金主爸爸']);
+    cfg.amount=pick([500,1000,2000,5000,6666,8888]);
+    cfg.level=pick(['warm','std','hell']);var p=LEVELS[cfg.level];
+    cfg.terms=clamp(p.terms+Math.floor(rnd(-3,4)),5,30);cfg.wipe=clamp(p.wipe+Math.floor(rnd(-10,16)),0,100);
+    cfg.essay=clamp(p.essay+Math.floor(rnd(-2,5))*50,100,1000);cfg.witness=Math.floor(rnd(0,4));
+    cfg.queue=pick([512,2048,4096,9999,65536]);cfg.copyPen=Math.random()>.25;cfg.patience=Math.random()>.5;
+    S.stamp();syncControls();updateOwner();toast('已随机生成一套缺德配置，请谨慎使用。','warn');
+  };
+  $('#a_reset').onclick=function(){var base=cfg.base;cfg=Object.assign({},DEFAULTS);cfg.base=base;S.tick();syncControls();updateOwner();toast('已恢复默认配置。','ok')};
+  $('#a_link').onclick=function(){
+    var base=cfg.base||(location.protocol.indexOf('http')===0?location.href.split('#')[0]:'');
+    if(!base){$('#linkHint').textContent='当前是本地文件 / 预览环境，无法直接生成外链：请先把本 HTML 部署到任意静态托管并填写上方「部署地址」，或直接使用聊天文本版（无需部署）。';$('#linkOut').value='';S.err();return}
+    if(!/^(https?|file):\/\//i.test(base)){base='https://'+base}
+    var url=base.split('#')[0]+'#c='+encCfg(cfg);
+    var loop=/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])([:/]|$)/i.test(base);
+    $('#linkOut').value=url;$('#linkHint').textContent='链接已生成：对方点开即进入填写流程，配置随链接携带。建议先点「自测」确认，再点「复制」把开场白 + 链接发去微信。'+(loop?' 注意：此链接指向本机测试地址，只有你自己能打开；发送前请先部署并更新「部署地址」。':'');
+    S.ok();
+  };
+  $('#a_copy_link').onclick=function(){var v=$('#linkOut').value;if(!v){toast('请先点击「生成分享链接」。','warn');S.err();return}copyText(openerText(cfg,v),'开场白 + 链接已复制，去微信发送吧。')};
+  syncControls();updateOwner();
+}
+function syncControls(){
+  $('#c_name').value=cfg.name;$('#c_boss').value=cfg.boss;$('#c_amount').value=cfg.amount;$('#c_queue').value=cfg.queue;
+  $('#c_terms').value=cfg.terms;$('#v_terms').textContent=cfg.terms+' 条';
+  $('#c_wipe').value=cfg.wipe;$('#v_wipe').textContent=cfg.wipe+'%';
+  $('#c_essay').value=cfg.essay;$('#v_essay').textContent=cfg.essay+' 字';
+  $('#v_witness').textContent=cfg.witness;$('#c_copy').checked=cfg.copyPen;$('#c_patience').checked=cfg.patience;
+  $$('#c_level button').forEach(function(b){b.classList.toggle('on',b.dataset.lv===cfg.level)});
+}
+function switchTab(which){
+  $('#tab_chat').classList.toggle('on',which==='chat');$('#tab_doc').classList.toggle('on',which==='doc');
+  $('#tab_chat').setAttribute('aria-selected',which==='chat');$('#tab_doc').setAttribute('aria-selected',which==='doc');
+  $('#p_chat').hidden=which!=='chat';$('#p_doc').hidden=which!=='doc';S.tick();
+}
+function updateOwner(){
+  var txt=buildChatText(cfg);
+  $('#chatPre').textContent=txt;
+  updateBaseStatus();
+  updateBlStrip();
+  var st=calcStats(cfg);
+  $('#s_rate').textContent=st.rate+'%';$('#s_steps').textContent=st.steps+' 项';
+  $('#s_words').textContent=txt.length+' 字';$('#s_silence').textContent=Math.max(1,Math.round(txt.length/160+cfg.terms*.4))+' 分钟';
+  var cl='';for(var i=0;i<Math.min(3,cfg.terms);i++)cl+='<li>'+esc(CLAUSES[i])+'</li>';
+  $('#docPrev').innerHTML=
+    '<div class="doc-head"><div class="doc-org">赛博信贷风控中心</div><div class="doc-sub">CYBER CREDIT RISK CONTROL CENTER</div></div>'+
+    '<div class="doc-rule"></div>'+
+    '<div class="doc-meta"><span>编号：JK-'+today()+'-0001</span><span>密级：<b>绝密★放款前</b></span></div>'+
+    '<div class="doc-title">个人借款申请暨承诺书</div>'+
+    '<p class="doc-lead">兹有 <span class="pen">'+esc(cfg.name)+'</span> 同志，因"确实很急但说不清哪里急"，特向 <span class="pen">'+esc(cfg.boss)+'</span> 申请借款人民币 <span class="pen">'+money(cfg.amount)+'</span> 元整。为防范"借时是大爷、还时是大爷"之风险，特订立本承诺书，条款如下：</p>'+
+    '<p class="doc-lead" style="font-size:12.5px;color:var(--ink-soft)">证件核验：姓名须为汉字，手机号须 11 位且号段真实，身份证号须通过地区码、出生日期与校验位三重核验；抄写与长文本禁止复制粘贴及自动填充，须逐字手动键入。</p>'+
+    '<p class="doc-lead" style="font-size:12.5px;color:var(--ink-soft)">风控终止：诚意分扣至 0 时申请立即终止、已填内容作废，并拉黑本设备——地狱模式 7 天、标准模式 1 天、温和模式 1 小时；拉黑期内任何链接发起的申请均不予受理。</p>'+
+    '<ol>'+cl+'</ol><div class="more">…… 以下省略 '+(cfg.terms-Math.min(3,cfg.terms))+' 条霸王条款，逐条签署，不支持全选 ……</div>'+
+    '<div class="stampbox"><div class="signline">出借人（签章）：<span class="pen">'+esc(cfg.boss)+'</span></div><div class="stamp">'+stampSVG('赛博信贷风控中心','','劝退业务专用章',118)+'</div></div>';
+}
+/* ================= 部署与分享向导 ================= */
+var GUIDE=[
+  {id:'netlify',label:'Netlify Drop · 拖拽最快',title:'零命令拖拽部署（免费，海外节点）',steps:[
+    '把本 HTML 文件改名为 <b>index.html</b>，单独放进一个新文件夹（例如 loan-page）。',
+    '浏览器打开 <b>app.netlify.com/drop</b>，用邮箱注册 / 登录（免费）。',
+    '把整个文件夹拖进页面里的虚线框，等上传完成。',
+    '页面会给出形如 <b>https://xxxx.netlify.app</b> 的地址——这就是部署地址：填进起草台，或直接打开该地址后把部署地址留空。',
+    '回起草台点「生成分享链接」→「自测」→「复制」，把开场白 + 链接发去微信即可。'
+  ],note:'不登录拖拽只给临时站点，登录后站点才长期保留。海外节点在国内打开可能偏慢，求稳请换 GitHub Pages 或对象存储。'},
+  {id:'github',label:'GitHub Pages · 免费稳定',title:'GitHub Pages 网页上传（全程不用命令行）',steps:[
+    '注册 / 登录 github.com，右上角 <b>New repository</b>，仓库名如 <b>loan-page</b>，选 Public，创建。',
+    '仓库页点 <b>Add file → Upload files</b>，把改名后的 <b>index.html</b> 拖进去，点 Commit changes。',
+    '进入 <b>Settings → Pages</b>，Source 选 <b>Deploy from a branch</b>，Branch 选 <b>main</b> / root，Save。',
+    '等约 1 分钟刷新 Pages 页，顶部出现 <b>https://&lt;用户名&gt;.github.io/loan-page/</b>——这就是部署地址。',
+    '填进起草台（或直接打开该地址后留空），生成链接、自测、复制发送。'
+  ],code:{label:'命令行版（会 git 者用）',text:'git init loan-page && cd loan-page\n# 将本 HTML 拷入目录并改名 index.html\ngit add index.html\ngit commit -m "loan commitment page"\ngit branch -M main\ngit remote add origin https://github.com/<用户名>/loan-page.git\ngit push -u origin main\n# 再到 Settings → Pages 启用 main 分支'},note:'github.io 在微信里偶尔打开慢或被拦截：被拦就换对象存储自定义域名或公司内网地址。'},
+  {id:'gitee',label:'Gitee Pages · 国内快',title:'Gitee Pages（国内节点，需实名认证）',steps:[
+    '注册 / 登录 gitee.com 并完成实名认证（Pages 服务的硬性要求）。',
+    '新建仓库 <b>loan-page</b>（公开），在仓库页用「上传文件」把改名后的 <b>index.html</b> 传上去。',
+    '仓库菜单找 <b>服务 → Gitee Pages</b>，部署分支选 <b>main</b>，点部署 / 更新。',
+    '页面给出 <b>https://&lt;用户名&gt;.gitee.io/loan-page/</b>——这就是部署地址。',
+    '填进起草台生成链接，自测后复制发送。'
+  ],note:'Gitee Pages 首次部署可能需人工审核；之后每次改文件都要回 Pages 页点一次「更新」才生效。'},
+  {id:'oss',label:'对象存储 COS / OSS',title:'腾讯云 COS / 阿里云 OSS 静态网站（按量计费，月成本几分钱）',steps:[
+    '控制台创建 Bucket：地域选国内，读写权限设为<b>公共读</b>（私有写）。',
+    '把改名后的 <b>index.html</b> 上传到 Bucket 根目录。',
+    '在 Bucket 设置里开启<b>静态网站托管</b>，索引文档填 <b>index.html</b>。',
+    '复制静态网站访问节点（形如 <b>https://&lt;bucket&gt;.cos-website.&lt;地域&gt;.myqcloud.com</b> 或 OSS 的 website  endpoint）——这就是部署地址。',
+    '填进起草台生成链接，自测后复制发送。'
+  ],code:{label:'命令行上传（可选）',text:'# 阿里云 ossutil\nossutil cp index.html oss://<你的bucket>/index.html\n# 腾讯云 coscmd\ncoscmd upload index.html /index.html'},note:'务必用「静态网站访问节点」，而不是默认 REST API endpoint，否则打开可能变成下载文件。长期用建议绑定自己已备案的域名。'},
+  {id:'intranet',label:'公司内网 · nginx',title:'公司内网 / 自有服务器 nginx（同事内网打开）',steps:[
+    '服务器上建目录 <b>/var/www/loan</b>，放入改名后的 <b>index.html</b>。',
+    'nginx 配置加一个 server 块（见下方代码块），或直接把文件放进现有站点目录。',
+    '执行 <b>nginx -t && nginx -s reload</b> 重载配置。',
+    '部署地址即 <b>http://&lt;内网IP或域名&gt;/loan/index.html</b>，先在自己电脑打开自测。',
+    '填进起草台生成链接发同事；内网外的人打不开，对外请换公网托管。'
+  ],code:{label:'nginx 配置片段',text:'server {\n    listen 80;\n    server_name loan.intranet.example.com;\n    root /var/www/loan;\n    index index.html;\n}'},note:'没有服务器？内网任一台常开的电脑也行：在文件目录运行 python -m http.server 8000 即成临时静态服务（地址 http://<内网IP>:8000/index.html）。'}
+];
+var GUIDE_FAQ=[
+  ['对方点开链接看到的是起草台（配置页）？','链接少了结尾的 #c=… 配置段：复制时请整行复制（「复制」按钮复制的是开场白 + 完整链接）。手抄地址漏掉井号段就会这样，重新生成再复制即可。'],
+  ['微信提示域名风险 / 打不开？','部分免费域名会被微信拦截。换对象存储 + 自有域名、公司内网地址，或直接发「聊天文本版」（免部署，粘贴即用）。'],
+  ['对方中途刷新或关掉怎么办？','进度存在对方自己的浏览器里，重开同一链接会恢复（刷新扣诚意分）；换手机或清缓存则从头开始。所有数据只留在对方本机，你和服务器都看不到。'],
+  ['改配置后要重新上传文件吗？','不用。配置编码在链接的 #c= 段里：起草台改参数后重新生成链接即可，文件本身不变，一次部署长期有效。'],
+  ['部署地址到底填什么？','本 HTML 上传后的公网访问地址：文件地址（https://…/index.html）或目录地址（https://…/loan-page/，目录内含 index.html）均可。若起草台本身已从线上地址打开，留空自动用当前网址。']
+];
+function baseInfo(v){
+  v=String(v||'').trim();
+  var online=/^https?:\/\//i.test(location.href);
+  if(!v){
+    if(!online)return{cls:'warn',msg:'当前是本地文件（file://），无法生成他人可点的外链：先按「部署教程」上传，或直接用聊天文本版。'};
+    if(/^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])([:/]|$)/i.test(location.href))return{cls:'warn',msg:'当前是本机测试地址（localhost / 127.0.0.1）：留空生成的链接只有你自己能打开。请先按「部署教程」上传到公网或内网并填入访问地址，或直接从部署后的地址打开本页再留空。'};
+    return{cls:'ok',msg:'检测到本页已从线上地址打开：部署地址留空，生成链接时自动使用当前网址。'};
+  }
+  if(/^file:/i.test(v)||/^[a-zA-Z]:[\\/]/.test(v)||v.indexOf('\\\\')===0)return{cls:'bad',msg:'这是本地磁盘路径，不是网址：别人打不开。请填上传后以 http(s):// 开头的公网访问地址。'};
+  var u=v;if(!/^https?:\/\//i.test(u))u='https://'+u;
+  if(/#c=/.test(u))return{cls:'warn',msg:'地址里已带配置段（#c=）：生成时会以当前配置覆盖旧配置，建议只填文件地址。'};
+  if(/[一-龥]/.test(u))return{cls:'warn',msg:'地址含中文文件名：能用，但建议上传前改名 index.html，链接更干净、也不易被聊天软件转码截断。'};
+  if(/^https?:\/\/(localhost|127\.0\.0\.1)([:/]|$)/i.test(u))return{cls:'warn',msg:'这是本机回环地址：只有你自己能打开。公司内网请填内网 IP 或域名。'};
+  if(!/\.(html?|htm)([?#]|$)/i.test(u)&&!u.endsWith('/'))return{cls:'warn',msg:'地址看起来像目录：请确保该目录下有 index.html（建议上传前把本文件改名为 index.html）。'};
+  return{cls:'ok',msg:'地址格式正常：点「生成分享链接」后可先「自测」，确认新窗口打开的是填写流程再发送。'};
+}
+function updateBaseStatus(){
+  var el=$('#baseStatus');if(!el)return;
+  var info=baseInfo(cfg.base);
+  el.className='basestatus '+info.cls;el.textContent=info.msg;
+}
+function openGuide(){
+  var o=$('#ovl'),d=document.createElement('div');d.className='ovl-block';
+  d.innerHTML='<div class="guidebox" role="dialog" aria-label="部署与分享指南"><button class="gclose" type="button" aria-label="关闭">✕</button>'+
+    '<h3>部署与分享 · 三步拿到链接</h3>'+
+    '<div class="gsub">① 把本 HTML 改名 index.html 上传到任意静态托管 → ② 把上传后的访问地址填进「部署地址」（本页若已从线上打开则留空）→ ③ 生成分享链接 → 自测 → 复制开场白 + 链接发去微信。对方点开即进入填写流程。</div>'+
+    '<div class="gtabs" role="tablist">'+GUIDE.map(function(g,i){return '<button type="button" class="gtab'+(i===0?' on':'')+'" data-g="'+i+'" role="tab" aria-selected="'+(i===0)+'">'+g.label+'</button>'}).join('')+'</div>'+
+    '<div id="gBody"></div>'+
+    '<div class="gfaq"><h4 style="font-family:var(--serif);font-size:14px;color:var(--ink);margin:6px 0">常见坑</h4>'+GUIDE_FAQ.map(function(f){return '<details><summary>'+esc(f[0])+'</summary><p>'+esc(f[1])+'</p></details>'}).join('')+'</div>'+
+    '<button class="btn btn-primary" id="gDone" type="button" style="margin-top:14px;width:100%">明白了，去生成链接</button></div>';
+  o.appendChild(d);
+  function show(i){
+    var g=GUIDE[i];
+    $('#gBody',d).innerHTML='<div class="gsec"><h4>'+esc(g.title)+'</h4>'+
+      g.steps.map(function(s,j){return '<div class="gstep"><em>'+(j+1)+'</em><span>'+s+'</span></div>'}).join('')+
+      (g.code?'<div class="gcode"><button type="button" data-gcopy="'+i+'">复制</button>'+esc(g.code.text)+'</div>':'')+
+      (g.note?'<div class="gnote"><b>注意：</b>'+esc(g.note)+'</div>':'')+'</div>';
+    $$('.gtab',d).forEach(function(b,j){b.classList.toggle('on',j===i);b.setAttribute('aria-selected',j===i)});
+    var cb=$('[data-gcopy]',d);if(cb)cb.onclick=function(){copyText(g.code.text,g.code.label+'已复制。')};
+  }
+  $$('.gtab',d).forEach(function(b){b.onclick=function(){S.tick();show(+b.dataset.g)}});
+  show(0);
+  function close(){d.remove()}
+  $('.gclose',d).onclick=close;
+  $('#gDone',d).onclick=function(){S.tick();close()};
+  d.addEventListener('click',function(e){if(e.target===d)close()});
+}
+/* ================= 诚意分归零 · 终止与拉黑 ================= */
+var BL_MS={warm:3600000,std:86400000,hell:604800000};
+var BL_LABEL={warm:'1 小时',std:'1 天',hell:'7 天（一周）'};
+function blKey(preview){return 'jtq_bl_'+(preview?'prev':'live')}
+function deviceId(){var d=store.get('jtq_dev');if(!d){d='SB-'+Math.random().toString(36).slice(2,8).toUpperCase();store.set('jtq_dev',d)}return d}
+function fmtDT(ts){var d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1,2)+'-'+pad(d.getDate(),2)+' '+pad(d.getHours(),2)+':'+pad(d.getMinutes(),2)+':'+pad(d.getSeconds(),2)}
+function fmtLeft(ms){if(ms<0)ms=0;var d=Math.floor(ms/86400000),h=Math.floor(ms%86400000/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000);return (d>0?d+' 天 ':'')+pad(h,2)+':'+pad(m,2)+':'+pad(s,2)}
+function getBL(preview){var r=store.get(blKey(preview));if(r&&r.until<=Date.now()){store.del(blKey(preview));return null}return r||null}
+function checkZero(){
+  if(!F||!F.st||F.st.done||F.st.terminated||F.st.score>0)return;
+  F.st.terminated=true;save();
+  setTimeout(terminateApplication,0);
+}
+function terminateApplication(){
+  if(!F)return;
+  var c=F.cfg,preview=F.preview;
+  var rec={until:Date.now()+BL_MS[c.level],level:c.level,at:Date.now(),name:(F.st.answers.basic&&F.st.answers.basic.name)||c.name,docNo:F.st.docNo,dev:deviceId(),cfg:c,preview:preview};
+  store.set(blKey(preview),rec);
+  store.del(F.key);
+  F.timers.forEach(clearTimeout);F.timers=[];
+  F.cleanups.forEach(function(fn){try{fn()}catch(e){}});F.cleanups=[];
+  F=null;
+  S.err();
+  var o=$('#ovl');o.innerHTML='';
+  var d=document.createElement('div');d.className='ovl-block';
+  d.innerHTML='<div class="wipe-stamp bl"><b>拉黑</b><span>BLACKLISTED · 诚意分归零 · 申请终止</span></div>';
+  o.appendChild(d);
+  setTimeout(function(){d.remove();renderBlacklist(rec,true)},1100);
+}
+function blacklistText(rec){
+  return ['【黑名单通知书 · 赛博信贷风控中心】','编号：'+rec.docNo,'登记姓名：'+rec.name,'设备编号：'+rec.dev,'终止原因：诚意分扣至 0 / 100，申请即时终止，已填内容全部作废。','风控等级：'+LEVELS[rec.level].label,'拉黑时长：'+BL_LABEL[rec.level],'解封时间：'+fmtDT(rec.until),'','拉黑期间，本设备通过本窗口任何链接发起的申请均不予受理。','反省建议：想想为什么平时不联系，一联系就是借钱。','（本通知书仅存于本机；跨浏览器向出借人求情无效。）'].join('\n');
+}
+function renderBlacklist(rec,justTerminated){
+  document.title='黑名单通知书 · 申请已终止';
+  app.innerHTML=
+  '<div class="fill-wrap"><section class="paper blpaper" id="blBox" aria-label="黑名单通知书">'+
+    '<div class="bl-seal"><b>拉黑</b><span>CYBER CREDIT · BLACKLIST</span></div>'+
+    '<div class="doc-head"><div class="doc-org" style="font-size:22px">黑名单通知书</div><div class="doc-sub">赛博信贷风控中心 · 申请终止暨拉黑决定</div></div>'+
+    '<div class="doc-rule"></div>'+
+    (justTerminated?'<div class="ferr show" style="margin:10px 0">【风控决定】诚意分扣至 0，本次申请即时终止，已填内容全部作废。</div>':'')+
+    '<div class="summary" style="margin-top:6px">'+
+      '<div class="sr"><span>登记姓名</span><b>'+esc(rec.name)+'</b></div>'+
+      '<div class="sr"><span>设备编号</span><b>'+esc(rec.dev)+'</b></div>'+
+      '<div class="sr"><span>申请编号</span><b>'+esc(rec.docNo)+'</b></div>'+
+      '<div class="sr"><span>终止原因</span><b>诚意分 0 / 100</b></div>'+
+      '<div class="sr"><span>风控等级</span><b>'+LEVELS[rec.level].label+'</b></div>'+
+      '<div class="sr"><span>拉黑时长</span><b>'+BL_LABEL[rec.level]+'</b></div>'+
+      '<div class="sr"><span>解封时间</span><b>'+fmtDT(rec.until)+'</b></div>'+
+      '<div class="sr"><span>拉黑剩余</span><b class="blcount" id="blCount" data-until="'+rec.until+'">'+fmtLeft(rec.until-Date.now())+'</b></div>'+
+    '</div>'+
+    '<p style="margin:14px 0 0;font-size:13.5px;line-height:1.9;color:var(--ink)">拉黑期间，本设备通过本窗口任何链接发起的借款申请均<b>不予受理</b>；刷新、换链接、清空填写记录皆无效。反省建议：想想为什么平时不联系，一联系就是借钱。</p>'+
+    '<div class="actions" style="margin-top:16px">'+
+      '<button class="btn btn-primary" id="blReflect" type="button">我已深刻反省</button>'+
+      '<button class="btn btn-paper" id="blCopy" type="button">'+ico('doc')+'复制通知书</button>'+
+      (rec.preview?'<button class="btn btn-ghost" id="blExit" type="button">退出试玩</button>':'')+
+      '<button class="btn btn-ghost" id="blRetry" type="button" hidden>拉黑已到期 · 重新发起申请</button>'+
+    '</div>'+
+    '<div class="fill-foot" style="margin-top:14px">本通知书仅保存于本机浏览器 · 仅供朋友间娱乐，无真实借贷效力</div>'+
+  '</section></div>';
+  $('#blReflect').onclick=function(){S.err();toast('<b>【反省已收到】</b>态度可嘉，但拉黑时长一秒也不会少。','warn');var p=$('.blpaper');if(p){p.classList.remove('quake');void p.offsetWidth;p.classList.add('quake')}};
+  $('#blCopy').onclick=function(){copyText(blacklistText(rec),'黑名单通知书已复制，可发给债主求情（跨浏览器无效）。')};
+  if(rec.preview)$('#blExit').onclick=function(){S.tick();renderOwner()};
+  $('#blRetry').onclick=function(){S.tick();enterFill(rec.cfg,rec.preview)};
+  window.scrollTo({top:0,behavior:'auto'});
+}
+function updateBlStrip(){
+  var el=$('#blStrip');if(!el)return;
+  var live=getBL(false),prev=getBL(true),rec=live||prev;
+  if(!rec){el.hidden=true;return}
+  el.hidden=false;
+  $('#blStripMsg').textContent=(live?'对方视角':'试玩视角')+'：'+LEVELS[rec.level].label+'诚意分归零，拉黑 '+BL_LABEL[rec.level]+'，'+fmtDT(rec.until)+' 解封。';
+  var t=$('#blStripTime');t.dataset.until=rec.until;t.textContent=fmtLeft(rec.until-Date.now());
+}
+function tickBL(){
+  var c=$('#blCount');
+  if(c){var left=+c.dataset.until-Date.now();
+    if(left<=0){c.textContent='已解封';var r=$('#blRetry');if(r)r.hidden=false}
+    else c.textContent=fmtLeft(left);}
+  var t=$('#blStripTime');
+  if(t){var l2=+t.dataset.until-Date.now();if(l2<=0)updateBlStrip();else t.textContent=fmtLeft(l2)}
+}
+setInterval(tickBL,1000);
+/* ================= 填写流程 ================= */
+var F=null; // {cfg, steps, idx, st, key, preview, timers[], cleanups[]}
+function stKey(c,preview){return 'jtq_v1_'+encCfg(c)+(preview?':prev':'')}
+function freshState(c){
+  return {step:0,score:100,answers:{},resets:{},flags:{},refreshes:0,done:false,signins:0,receipt:null,t0:Date.now(),docNo:'JK-'+today()+'-'+pad(Math.floor(Math.random()*1000000),6),wipes:0};
+}
+function enterFill(c,preview){
+  exitFill(true);
+  var bl=getBL(preview);
+  if(bl){renderBlacklist(bl,false);return}
+  var key=stKey(c,preview);
+  if(preview)store.del(key);
+  var st=preview?freshState(c):(store.get(key)||freshState(c));
+  var resumed=!preview&&st.step>0&&!st.done;
+  if(resumed){st.refreshes++;st.score=clamp(st.score-10,0,100)}
+  var steps=stepPlan(c);
+  var extras=steps.filter(function(id){return id==='reconf'||id==='patience'}).length;
+  F={cfg:c,steps:steps,idx:clamp(st.step,0,steps.length-1),st:st,key:key,preview:!!preview,timers:[],cleanups:[],hidden:extras};
+  st.step=F.idx;save();
+  renderFillChrome();
+  if(st.done){renderReceipt();return}
+  renderStep();
+  if(resumed)setTimeout(function(){if(F&&!F.st.terminated)toast('检测到未完成的申请，进度已恢复。<b>刷新无法逃避</b>，诚意分 -10。','warn')},600);
+}
+function exitFill(silent){
+  if(!F)return;
+  F.timers.forEach(clearTimeout);F.timers=[];
+  F.cleanups.forEach(function(fn){try{fn()}catch(e){}});F.cleanups=[];
+  $('#ovl').innerHTML='';
+  F=null;
+  if(!silent)renderOwner();
+}
+function save(){if(F)store.set(F.key,F.st)}
+function later(fn,ms){var t=setTimeout(fn,ms);F.timers.push(t);return t}
+function wipeCap(){return LEVELS[F.cfg.level].cap}
+function visibleTotal(){return F.steps.length-F.hidden}
+function renderFillChrome(){
+  var c=F.cfg;
+  document.title='借款资格审查 · 第 '+(F.idx+1)+' 环节';
+  app.innerHTML=
+  '<div class="fill-wrap">'+
+  '<div class="fill-top"><div class="row1"><span class="t">赛博信贷 · 借款资格审查系统</span><span class="sp"></span>'+
+    (F.preview?'<button class="exitbtn" id="exitPrev" type="button">退出试玩</button>':'')+
+    '<span class="scorechip" id="scoreChip">诚意分 '+F.st.score+'</span>'+sndBtnHTML()+'</div>'+
+    '<div class="segs" id="segs"></div>'+
+    '<div class="stepmeta"><span id="stepNo"></span><b id="stepTitle"></b><span>编号 '+F.st.docNo+'</span></div>'+
+  '</div>'+
+  '<section class="paper" id="fillPaper">'+
+    '<div class="doc-head"><div class="doc-org" style="font-size:22px">个人借款申请暨承诺书</div><div class="doc-sub">申请人：'+esc(c.name)+' · 申请金额：'+money(c.amount)+' · 出借人：'+esc(c.boss)+'</div></div>'+
+    '<div class="doc-rule"></div>'+
+    '<div id="stepBody"></div>'+
+  '</section>'+
+  '<div class="fill-foot">本系统不上传任何数据，填写内容仅保存在本机浏览器 · 仅供朋友间娱乐，无真实借贷效力<br><button id="clearLocal" type="button">清空本地填写记录</button></div>'+
+  '</div>'+
+  '<div class="bottombar" id="bottombar"><div class="in">'+
+    '<button class="btn btn-paper btn-prev" id="btnPrev" type="button">'+ico('back')+'上一环</button>'+
+    '<button class="btn btn-primary" id="btnNext" type="button">提交本环节'+ico('next')+'</button>'+
+  '</div></div>';
+  bindSnd(app);
+  if(F.preview)$('#exitPrev').onclick=function(){S.tick();exitFill(false)};
+  $('#clearLocal').onclick=function(){
+    F.timers.forEach(clearTimeout);F.timers=[];
+    F.cleanups.forEach(function(fn){try{fn()}catch(e){}});F.cleanups=[];
+    store.del(F.key);toast('本地记录已清空，流程重新开始。','ok');F.st=freshState(F.cfg);F.idx=0;save();renderFillChrome();renderStep();
+  };
+  $('#btnPrev').onclick=function(){if(F.idx>0){F.idx--;F.st.step=F.idx;save();S.tick();renderStep()}};
+  $('#btnNext').onclick=goNext;
+  updateChrome();
+}
+function updateChrome(){
+  var total=visibleTotal(),segs=$('#segs');if(!segs)return;
+  var h='';for(var i=0;i<total;i++)h+='<i class="'+(i<F.idx?'done':i===F.idx?'cur':'')+'"></i>';
+  segs.innerHTML=h;
+  $('#stepNo').textContent='第 '+(F.idx+1)+' 环节 / 共 '+total+' 环节';
+  $('#stepTitle').textContent=IMPL[stepId()].title;
+  var chip=$('#scoreChip');chip.textContent='诚意分 '+F.st.score;chip.classList.toggle('low',F.st.score<60);
+  $('#btnPrev').style.visibility=F.idx>0?'visible':'hidden';
+  document.title='借款资格审查 · 第 '+(F.idx+1)+' / '+total+' 环节';
+  checkZero();
+}
+function stepId(){return F.steps[F.idx]}
+function ans(id){id=id||stepId();if(!F.st.answers[id])F.st.answers[id]={};return F.st.answers[id]}
+function renderStep(){
+  if(!F)return;
+  F.timers.forEach(clearTimeout);F.timers=[];
+  F.cleanups.forEach(function(fn){try{fn()}catch(e){}});F.cleanups=[];
+  var id=stepId(),impl=IMPL[id],body=$('#stepBody');
+  body.innerHTML='<div class="fadein"><div class="step-title">'+impl.title+'</div><div class="step-sub">'+impl.sub(F.cfg)+'</div><div id="stepFields"></div></div>';
+  impl.render($('#stepFields'),{ans:ans,st:F.st,cfg:F.cfg,rerender:renderStep,toast:toast});
+  updateChrome();
+  $('#btnNext').innerHTML=(id==='submit'?'确认提交（不可撤回）':'提交本环节')+ico('next');
+  window.scrollTo({top:0,behavior:'auto'});
+  if(impl.onEnter)impl.onEnter();
+  scheduleWipe();
+}
+function showErrors(errs){
+  $$('.ferr').forEach(function(e){e.classList.remove('show');e.textContent=''});
+  var first=null;
+  Object.keys(errs).forEach(function(k){
+    var slot=$('.ferr[data-err="'+k+'"]');
+    if(slot){slot.textContent='【审核意见】'+errs[k];slot.classList.add('show');if(!first)first=slot}
+  });
+  if(first)first.scrollIntoView({block:'center',behavior:'smooth'});
+}
+function scheduleWipe(){
+  var id=stepId(),impl=IMPL[id];
+  if(!impl.wipeable||F.cfg.wipe<=0)return;
+  if((F.st.resets[id]||0)>=wipeCap())return;
+  if(Math.random()*100<F.cfg.wipe*.6){
+    later(function(){if(F&&stepId()===id)doWipe(pick(WIPE_REASONS))},rnd(3500,8000));
+  }
+}
+function doWipe(reason){
+  var id=stepId();
+  F.st.resets[id]=(F.st.resets[id]||0)+1;
+  F.st.wipes++;F.st.score=clamp(F.st.score-5,0,100);
+  delete F.st.answers[id];save();
+  S.wipe();
+  var o=$('#ovl'),d=document.createElement('div');d.className='ovl-block';
+  d.innerHTML='<div class="wipe-stamp"><b>作废</b><span>REJECTED · 风控随机抽查</span></div>';
+  o.appendChild(d);
+  var p=$('#fillPaper');if(p)p.classList.add('quake');
+  updateChrome();
+  later(function(){d.remove();if(p)p.classList.remove('quake');if(F&&stepId()===id){renderStep();toast('<b>【风控通知】</b>'+esc(reason),'warn')}},1000);
+}
+function goNext(){
+  var id=stepId(),impl=IMPL[id];
+  var res=impl.validate({ans:ans,st:F.st,cfg:F.cfg});
+  if(res&&res.__rerender){
+    renderStep();
+    if(res.__stay){
+      if(res.errors&&Object.keys(res.errors).length)showErrors(res.errors);
+      else{S.ok();toast('<b>【抄录进度】</b>第一段通过，请继续抄写补充承诺。','ok')}
+      return;
+    }
+    res=res.errors||{};
+  }
+  var errs=res;
+  if(errs&&Object.keys(errs).length){
+    showErrors(errs);S.err();
+    F.st.score=clamp(F.st.score-2,0,100);save();updateChrome();
+    var b=$('#btnNext');b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');
+    return;
+  }
+  showErrors({});
+  if(id==='submit'){finishFlow();return}
+  // 提交时随机作废
+  if(impl.wipeable&&F.cfg.wipe>0&&(F.st.resets[id]||0)<wipeCap()&&Math.random()*100<F.cfg.wipe*.35){
+    doWipe(pick(WIPE_REASONS));return;
+  }
+  S.ok();
+  // 风控追加环节
+  var inflate=0;
+  if(id==='purpose'&&F.hidden>0&&!F.st.flags.inflated){
+    F.st.flags.inflated=true;inflate=visibleTotal();F.hidden=0;
+  }
+  F.idx++;F.st.step=F.idx;save();renderStep();
+  if(inflate){
+    later(function(){toast('<b>【风控通知】</b>根据最新风控要求，审查环节由 '+inflate+' 项调整为 '+visibleTotal()+' 项，请继续。','warn');S.err()},400);
+  }
+}
+/* ---------- 字段 HTML  helpers ---------- */
+function fWrap(no,label,inner,key,hint){
+  return '<div class="field"><label class="fl"><em>'+no+'</em>'+label+'</label>'+inner+(hint?'<div class="fh">'+hint+'</div>':'')+'<div class="ferr" data-err="'+key+'" role="alert"></div></div>';
+}
+function fErr(key){return '<div class="ferr" data-err="'+key+'" role="alert"></div>'}
+function counterHTML(id){return '<div class="counter" id="'+id+'"></div>'}
+function bindCounter(ta,counterId,min){
+  var c=$('#'+counterId);
+  function up(){var n=ta.value.length;c.textContent='已写 '+n+' 字 / 至少 '+min+' 字';c.classList.toggle('ok',n>=min)}
+  ta.addEventListener('input',up);up();
+}
+/* ---------- 证件 / 姓名合理性核验 ---------- */
+var PROVINCE_CODES={'11':1,'12':1,'13':1,'14':1,'15':1,'21':1,'22':1,'23':1,'31':1,'32':1,'33':1,'34':1,'35':1,'36':1,'37':1,'41':1,'42':1,'43':1,'44':1,'45':1,'46':1,'50':1,'51':1,'52':1,'53':1,'54':1,'61':1,'62':1,'63':1,'64':1,'65':1,'71':1,'81':1,'82':1};
+function checkName(v){
+  v=String(v==null?'':v).trim();
+  if(!v)return '请填写姓名。';
+  if(!/^[一-龥·]{2,20}$/.test(v))return '姓名须为 2–20 个汉字（少数民族姓名可含"·"），不得夹杂字母、数字、符号或空格，请如实填写。';
+  if(/^(.)\1+$/.test(v))return '姓名疑似叠字敷衍（如"哈哈哈"），系统不予受理，请如实填写。';
+  if(/(测试|匿名|无名|不知道|随便|本人|姓名|哈哈|呵呵|路人|某甲|某乙)/.test(v))return '检测到敷衍性姓名，请如实填写。';
+  return '';
+}
+function checkPhone(v){
+  v=String(v==null?'':v).trim();
+  if(!v)return '请填写手机号。';
+  if(!/^\d+$/.test(v))return '手机号须为纯数字，请勿夹杂空格、横线或其他字符。';
+  if(v.length!==11)return '手机号须为 11 位，当前 '+v.length+' 位，位数不符。';
+  if(!/^1[3-9]/.test(v))return '号段无效：大陆手机号须以 13–19 开头，请核对后填写。';
+  if(/(\d)\1{7}$/.test(v))return '尾号八位同字，号码过于敷衍，请如实填写。';
+  if('0123456789012345678'.indexOf(v)>=0||'9876543210987654321'.indexOf(v)>=0)return '检测到键盘顺子号码，疑似乱填，请如实填写。';
+  return '';
+}
+function checkID(v){
+  v=String(v==null?'':v).trim().toUpperCase();
+  if(!v)return '请填写身份证号。';
+  if(!/^\d{17}[\dX]$/.test(v))return '身份证号须为 18 位（前 17 位数字，末位数字或 X），当前 '+v.length+' 位，格式不符。';
+  if(!PROVINCE_CODES[v.slice(0,2)])return '地区码核验失败：该户籍所在地代码不存在，请勿虚构。';
+  var y=+v.slice(6,10),m=+v.slice(10,12),d=+v.slice(12,14),now=new Date();
+  if(y<1900||y>now.getFullYear())return '出生年份超出合理范围，请核对。';
+  if(m<1||m>12)return '出生月份无效，请核对。';
+  var md=[31,28,31,30,31,30,31,31,30,31,30,31];
+  if((y%4===0&&y%100!==0)||y%400===0)md[1]=29;
+  if(d<1||d>md[m-1])return '出生日期无效（该月没有这一天），请核对。';
+  if(new Date(y,m-1,d).getTime()>now.getTime())return '出生日期晚于今天，疑似来自未来，请核对。';
+  var age=now.getFullYear()-y;
+  if(now.getMonth()+1<m||(now.getMonth()+1===m&&now.getDate()<d))age--;
+  if(age<18)return '核验不通过：未成年人请回家写作业，本窗口不受理。';
+  if(age>120)return '年龄超出合理范围，请核对身份证号。';
+  var w=[7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2],sum=0;
+  for(var i=0;i<17;i++)sum+=+v.charAt(i)*w[i];
+  if(v.charAt(17)!==['1','0','X','9','8','7','6','5','4','3','2'][sum%11])return '校验位核验失败：该号码不符合 GB 11643 校验规则，疑似随手编造，请如实填写。';
+  return '';
+}
+function maskPhone(v){v=String(v||'');return /^\d{11}$/.test(v)?v.slice(0,3)+'****'+v.slice(7):'未登记'}
+function maskID(v){v=String(v||'');return v.length===18?v.slice(0,6)+'********'+v.slice(14):'未登记'}
+/* ---------- 手动输入守卫：禁粘贴 / 禁自动填充 / 禁整段填入，保留中文输入法 ---------- */
+var MANUAL_TYPES={insertText:1,insertCompositionText:1,insertLineBreak:1,insertParagraph:1,deleteContent:1,deleteContentBackward:1,deleteContentForward:1,deleteWordBackward:1,deleteWordForward:1,deleteSoftLineBackward:1,deleteSoftLineForward:1,deleteHardLineBackward:1,deleteHardLineForward:1};
+function guardManual(el){
+  if(!el||el.__manualGuard)return;el.__manualGuard=true;
+  el.setAttribute('autocomplete','off');el.setAttribute('autocorrect','off');el.setAttribute('autocapitalize','off');el.setAttribute('spellcheck','false');
+  el.setAttribute('data-lpignore','true');el.setAttribute('data-1p-ignore','true');
+  el.classList.add('manual-guard');
+  var lastGood=el.value,composing=false,composedAt=0;
+  function imeSafe(){return composing||Date.now()-composedAt<600}
+  function bust(msg,revert){
+    if(revert)el.value=lastGood;
+    if(F){F.st.score=clamp(F.st.score-2,0,100);save();updateChrome()}
+    S.err();
+    toast('<b>【手动输入监测】</b>'+msg+' 诚意分 -2。','warn');
+    el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');
+  }
+  el.addEventListener('compositionstart',function(){composing=true});
+  el.addEventListener('compositionend',function(){composing=false;composedAt=Date.now();lastGood=el.value});
+  el.addEventListener('paste',function(e){e.preventDefault();bust('检测到粘贴行为，本栏只接受逐字手动键入。',false)});
+  el.addEventListener('drop',function(e){e.preventDefault();bust('检测到拖拽填入，本栏只接受逐字手动键入。',false)});
+  el.addEventListener('copy',function(e){e.preventDefault();bust('本栏内容禁止复制，防止清空后回填。',false)});
+  el.addEventListener('cut',function(e){e.preventDefault();bust('本栏内容禁止剪切，防止清空后回填。',false)});
+  el.addEventListener('contextmenu',function(e){e.preventDefault()});
+  el.addEventListener('beforeinput',function(e){
+    var t=e.inputType||'';
+    if(composing||t==='insertCompositionText')return;
+    if(!MANUAL_TYPES[t]){
+      e.preventDefault();
+      bust(t.indexOf('Paste')>=0?'检测到粘贴行为，本栏只接受逐字手动键入。':t.indexOf('Drop')>=0?'检测到拖拽填入。':'检测到自动填充 / 非手动输入（'+(t||'未知来源')+'）。',false);
+      return;
+    }
+    if(t==='insertText'&&e.data&&e.data.length>1&&!imeSafe()){e.preventDefault();bust('检测到整段一次性填入（疑似自动填写或代写），请逐字键入。',false)}
+  });
+  el.addEventListener('input',function(){
+    if(composing)return;
+    if(imeSafe()){lastGood=el.value;return}
+    if(el.value.length-lastGood.length>1){bust('检测到整段一次性填入，已回退，请逐字手动键入。',true);return}
+    lastGood=el.value;
+  });
+  el.addEventListener('animationstart',function(e){
+    if(e.animationName==='jtqAutofill'){el.value='';lastGood='';bust('检测到浏览器自动填充，已清空，请逐字手动键入。',false)}
+  });
+}
+function lockSource(el){
+  if(!el)return;
+  ['copy','cut','contextmenu','dragstart','selectstart'].forEach(function(ev){el.addEventListener(ev,function(e){e.preventDefault()})});
+}
+/* ---------- 各环节实现 ---------- */
+var IMPL={};
+IMPL.notice={
+  title:'借款申请须知',wipeable:false,
+  sub:function(){return '环节一 · 请先逐字阅读，跳读将被重置'},
+  render:function(root,x){
+    var a=x.ans('notice');if(!a.t0)a.t0=Date.now();if(a.read===undefined)a.read=false;if(a.bottom===undefined)a.bottom=false;
+    var need=x.cfg.level==='warm'?5:x.cfg.level==='hell'?20:12;
+    root.innerHTML=
+      '<div class="noticebox" id="ntBox" tabindex="0" aria-label="借款申请须知全文">'+NOTICE.map(function(p){return '<p>'+esc(p)+'</p>'}).join('')+'<p style="text-align:center;color:var(--ink-faint)">—— 须知完 ——</p></div>'+
+      '<div class="readmeta"><span id="ntScroll">阅读进度 0%</span><span id="ntTime">已阅读 0 秒 / 需 '+need+' 秒</span></div>'+
+      '<label class="checkline"><input type="checkbox" id="ntRead" disabled><span>本人已逐字阅读并理解上述全部条款，自愿接受一切合理及不合理安排。</span></label>'+fErr('read');
+    var box=$('#ntBox'),cb=$('#ntRead');cb.checked=a.read;
+    function refresh(){
+      var dwell=Math.floor((Date.now()-a.t0)/1000);
+      $('#ntTime').textContent='已阅读 '+dwell+' 秒 / 需 '+need+' 秒';
+      var pct=box.scrollHeight<=box.clientHeight?100:Math.round(box.scrollTop/(box.scrollHeight-box.clientHeight)*100);
+      $('#ntScroll').textContent='阅读进度 '+clamp(pct,0,100)+'%';
+      if(pct>=99&&!a.bottom){
+        a.bottom=true;save();
+        if(!x.st.flags.ntReset&&x.cfg.level!=='warm'&&Math.random()<.4){
+          x.st.flags.ntReset=true;box.scrollTop=0;a.bottom=false;save();
+          x.toast('<b>【监读提示】</b>检测到跳读行为，已返回文首，请重新逐字阅读。','warn');S.err();
+        }
+      }
+      cb.disabled=!(a.bottom&&dwell>=need);
+    }
+    box.addEventListener('scroll',function(){refresh();save()});
+    cb.addEventListener('change',function(){a.read=cb.checked;save();S.tick()});
+    var iv=setInterval(refresh,500);F.cleanups.push(function(){clearInterval(iv)});
+    refresh();
+  },
+  validate:function(x){
+    var a=x.ans('notice'),need=x.cfg.level==='warm'?5:x.cfg.level==='hell'?20:12;
+    if(!a.read)return{read:'请先滚动阅读到底部并停留满 '+need+' 秒，再勾选确认。'};
+    return{};
+  }
+};
+IMPL.basic={
+  title:'基本信息登记',wipeable:true,
+  sub:function(){return '环节二 · 请与身份证、户口本、良心保持一致'},
+  render:function(root,x){
+    var a=x.ans('basic');
+    ['name','phone','id','rel','years','last','why','was'].forEach(function(k){if(a[k]===undefined)a[k]=''});
+    root.innerHTML=
+      fWrap('2.1','申请人姓名','<input type="text" id="b_name" maxlength="20" autocomplete="off" value="'+esc(a.name)+'" placeholder="须与身份证一致">','name','格式核验：2–20 个汉字，字母数字符号一律驳回。')+
+      fWrap('2.2','手机号','<input type="tel" id="b_phone" maxlength="11" inputmode="numeric" autocomplete="off" value="'+esc(a.phone)+'" placeholder="11 位大陆手机号">','phone','位数、号段逐项核验，顺子号、重复号视为乱填。')+
+      fWrap('2.3','身份证号','<input type="text" id="b_id" maxlength="18" autocomplete="off" value="'+esc(a.id)+'" placeholder="18 位，末位 X 须大写" style="text-transform:uppercase">','id','地区码、出生日期、校验位三重核验，编造必被驳回。')+
+      fWrap('2.4','与出借人关系','<select id="b_rel"><option value="">请选择（请如实填写）</option>'+REL_OPTS.map(function(r){return '<option'+(a.rel===r?' selected':'')+'>'+r+'</option>'}).join('')+'</select>','rel','大数据将交叉核验，虚报者后果自负。')+
+      fWrap('2.5','认识年限（年）','<input type="number" id="b_years" min="0" max="80" value="'+esc(a.years)+'" placeholder="不足 3 年将被备注感情基础薄弱">','years')+
+      fWrap('2.6','上一次非借钱联系的日期','<input type="date" id="b_last" value="'+esc(a.last)+'">','last')+
+      (a.whyNeeded?fWrap('2.7','请解释为何平时不联系、一联系就借钱<span class="manual-note">手动输入监测中</span>','<textarea id="b_why" placeholder="不少于 30 字，须逐字手动键入，禁止粘贴">'+esc(a.why)+'</textarea>','why','本栏禁止复制、粘贴、自动填充，违者驳回并扣分。'):'')+
+      fWrap('2.8','上一次联系是否为了借钱','<div class="radio-row"><label class="radio-pill"><input type="radio" name="b_was" value="是"'+(a.was==='是'?' checked':'')+'>是</label><label class="radio-pill"><input type="radio" name="b_was" value="否"'+(a.was==='否'?' checked':'')+'>否</label></div>','was');
+    $('#b_name').addEventListener('input',function(){a.name=this.value;save()});
+    $('#b_phone').addEventListener('input',function(){a.phone=this.value;save()});
+    $('#b_id').addEventListener('input',function(){var v=this.value.toUpperCase();if(v!==this.value)this.value=v;a.id=v;save()});
+    $('#b_rel').addEventListener('change',function(){a.rel=this.value;save();S.tick()});
+    $('#b_years').addEventListener('input',function(){a.years=this.value;save()});
+    $('#b_last').addEventListener('change',function(){a.last=this.value;save()});
+    if(a.whyNeeded){var bw=$('#b_why');guardManual(bw);bw.addEventListener('input',function(){a.why=this.value;save()})}
+    $$('input[name="b_was"]').forEach(function(r){r.addEventListener('change',function(){a.was=this.value;save();S.tick()})});
+  },
+  validate:function(x){
+    var a=x.ans('basic'),e={};
+    var nm=checkName(a.name);if(nm)e.name=nm;
+    var ph=checkPhone(a.phone);if(ph)e.phone=ph;
+    var idm=checkID(a.id);if(idm)e.id=idm;
+    if(!a.rel)e.rel='请选择与出借人的关系。';
+    else if(WEAK_REL[a.rel]&&!x.st.flags.relTried){x.st.flags.relTried=true;e.rel='关系等级不足以支撑本次借款，请先充值感情（本系统不支持充值）。可更换选项，或再次提交强行继续。'}
+    if(a.years==='')e.years='请填写认识年限。';
+    else if(+a.years<3&&!x.st.flags.youngWarn){x.st.flags.youngWarn=true;x.st.score=clamp(x.st.score-3,0,100);toast('<b>【备注】</b>感情基础薄弱（不足 3 年），诚意分 -3，请在后续环节加倍表现。','warn')}
+    if(!a.last)e.last='请填写上一次非借钱联系的日期。';
+    else{
+      var days=(Date.now()-new Date(a.last).getTime())/864e5;
+      if(days>90&&!a.whyNeeded){a.whyNeeded=true;save();e.last='大数据核验：您仅在借钱时出现。请在新增的 2.7 项中作出解释。';return{__rerender:true,errors:e}}
+      if(a.whyNeeded&&(!a.why||a.why.trim().length<30))e.why='解释不少于 30 字，"忘了"不算解释。';
+    }
+    if(!a.was)e.was='请如实选择。';
+    else if(a.was==='否'&&!x.st.flags.stubborn){x.st.flags.stubborn=true;e.was='与系统大数据不符，请重新选择。'}
+    else if(a.was==='否'&&x.st.flags.stubborn&&!x.st.flags.stubborn2){x.st.flags.stubborn2=true;x.st.score=clamp(x.st.score-5,0,100);toast('<b>【备注】</b>检测到嘴硬，诚意分 -5，勉强受理。','warn')}
+    save();return e;
+  }
+};
+IMPL.relation={
+  title:'关系深度核验',wipeable:true,
+  sub:function(){return '环节三 · 真朋友，经得起灵魂拷问'},
+  render:function(root,x){
+    var a=x.ans('relation');['dish','story','river'].forEach(function(k){if(a[k]===undefined)a[k]=''});
+    var min=Math.max(80,Math.round(x.cfg.essay/3));a.min=min;
+    root.innerHTML=
+      fWrap('3.1','出借人最爱吃的一道菜','<input type="text" id="r_dish" maxlength="30" value="'+esc(a.dish)+'" placeholder="答错请重新想">','dish','系统将进行交叉核验。')+
+      fWrap('3.2','请描述你们最难忘的一次共同经历<span class="manual-note">手动输入监测中</span>','<textarea id="r_story" placeholder="不少于 '+min+' 字，须逐字手动键入，禁止粘贴，编造痕迹过重将被清空">'+esc(a.story)+'</textarea>'+counterHTML('r_cnt'),'story')+
+      fWrap('3.3','送命题：出借人和你妈同时掉水里，你先还谁的钱？','<div class="radio-row">'+
+        '<label class="radio-pill"><input type="radio" name="r_river" value="a"'+(a.river==='a'?' checked':'')+'>先还出借人的钱</label>'+
+        '<label class="radio-pill"><input type="radio" name="r_river" value="b"'+(a.river==='b'?' checked':'')+'>先救妈，钱慢慢还</label>'+
+        '<label class="radio-pill"><input type="radio" name="r_river" value="c"'+(a.river==='c'?' checked':'')+'>这题超纲了</label></div>','river');
+    $('#r_dish').addEventListener('input',function(){a.dish=this.value;save()});
+    var ta=$('#r_story');guardManual(ta);ta.addEventListener('input',function(){a.story=this.value;save()});bindCounter(ta,'r_cnt',min);
+    $$('input[name="r_river"]').forEach(function(r){r.addEventListener('change',function(){a.river=this.value;save();S.tick()})});
+  },
+  validate:function(x){
+    var a=x.ans('relation'),e={};
+    if(!a.dish||!a.dish.trim())e.dish='请填写出借人最爱吃的一道菜。';
+    else if(!x.st.flags.dishTried){x.st.flags.dishTried=true;save();e.dish='交叉核验：与出借人档案不符（出借人表示自己也忘了档案里写的啥）。请再想想，再次提交可勉强通过。'}
+    if(!a.story||a.story.length<(a.min||80))e.story='共同经历不少于 '+(a.min||80)+' 字，目前 '+((a.story||'').length)+' 字。感情不够，字数来凑。';
+    if(a.river!=='a')e.river='价值观审核：该答案体现还款意愿不足，请重新选择。';
+    save();return e;
+  }
+};
+IMPL.purpose={
+  title:'借款用途审查',wipeable:true,
+  sub:function(c){return '环节四 · 说明不少于 '+c.essay+' 字，字字珠玑'},
+  render:function(root,x){
+    var a=x.ans('purpose');
+    if(a.use===undefined)a.use='';if(a.text===undefined)a.text='';
+    if(!a.others)a.others=[{n:'',r:''},{n:'',r:''},{n:'',r:''}];
+    root.innerHTML=
+      fWrap('4.1','借款用途','<select id="p_use"><option value="">请选择</option>'+USE_OPTS.map(function(u){return '<option'+(a.use===u?' selected':'')+'>'+u+'</option>'}).join('')+'</select>','use')+
+      fWrap('4.2','用途详细说明<span class="manual-note">手动输入监测中</span>','<textarea id="p_text" style="min-height:150px" placeholder="不少于 '+x.cfg.essay+' 字，须逐字手动键入，禁止粘贴。提示：写到 90% 时可能触发敏感词检测。">'+esc(a.text)+'</textarea>'+counterHTML('p_cnt'),'text')+
+      '<div class="field"><label class="fl"><em>4.3</em>请列出另外 3 位可以借钱的对象，并说明为何不找他们</label>'+
+      a.others.map(function(o,i){return '<div style="display:flex;gap:8px;margin-bottom:8px"><input type="text" class="p_on" data-i="'+i+'" maxlength="20" placeholder="对象 '+(i+1)+'" value="'+esc(o.n)+'" style="flex:0 0 34%"><input type="text" class="p_or" data-i="'+i+'" maxlength="60" placeholder="为何不找 TA（不少于 5 字，「没有」无效）" value="'+esc(o.r)+'"></div>'}).join('')+fErr('others')+'</div>';
+    $('#p_use').addEventListener('change',function(){a.use=this.value;save();S.tick()});
+    var ta=$('#p_text');
+    guardManual(ta);
+    ta.addEventListener('input',function(){
+      a.text=this.value;save();
+      if(!x.st.flags.essayWiped&&x.cfg.level!=='warm'&&a.text.length>=x.cfg.essay*.9&&Math.random()<.3){
+        x.st.flags.essayWiped=true;a.text='';save();S.wipe();
+        x.rerender();x.toast('<b>【敏感词检测】</b>"借"字出现频率异常，本段已清空，请换一种说法。','warn');
+      }
+    });
+    bindCounter(ta,'p_cnt',x.cfg.essay);
+    $$('.p_on').forEach(function(el){el.addEventListener('input',function(){a.others[+this.dataset.i].n=this.value;save()})});
+    $$('.p_or').forEach(function(el){el.addEventListener('input',function(){a.others[+this.dataset.i].r=this.value;save()})});
+  },
+  validate:function(x){
+    var a=x.ans('purpose'),e={};
+    if(!a.use)e.use='请选择借款用途。';
+    else if(RISKY_USE[a.use]&&!x.st.flags.useTried){x.st.flags.useTried=true;save();e.use=RISKY_USE[a.use]}
+    else if(RISKY_USE[a.use]&&x.st.flags.useTried&&!x.st.flags.useNoted){x.st.flags.useNoted=true;x.st.score=clamp(x.st.score-8,0,100);toast('<b>【备注】</b>已备注高风险用途，诚意分 -8。','warn')}
+    if(!a.text||a.text.length<x.cfg.essay)e.text='用途说明不少于 '+x.cfg.essay+' 字，目前 '+((a.text||'').length)+' 字。';
+    var bad=false;
+    a.others.forEach(function(o){if(!o.n||checkName(o.n)||!o.r||o.r.trim().length<5||/^(没有|不熟|无)$/.test(o.r.trim()))bad=true});
+    if(bad)e.others='三位对象均须填写（姓名为 2–20 个汉字，不得乱填），理由不少于 5 字，"没有 / 不熟"为无效答案，请发挥想象力。';
+    save();return e;
+  }
+};
+IMPL.ability={
+  title:'还款能力评估',wipeable:true,
+  sub:function(){return '环节五 · 太高不行，太低也不行'},
+  render:function(root,x){
+    var a=x.ans('ability');
+    if(a.income===undefined)a.income=8000;if(a.save===undefined)a.save='';if(a.mail===undefined)a.mail=false;if(a.saveWhy===undefined)a.saveWhy='';
+    root.innerHTML=
+      fWrap('5.1','月收入（元）','<input type="range" id="a_income" min="0" max="50000" step="500" value="'+a.income+'"><div class="counter" id="a_inc_v"></div>','income','提示：过高建议移步银行，过低建议先搬砖。')+
+      fWrap('5.2','当前存款（元）','<input type="number" id="a_save" min="0" value="'+esc(a.save)+'" placeholder="请与借款金额对照填写">','save')+
+      (a.needWhy?fWrap('5.3','存款不足，请补充还款来源说明<span class="manual-note">手动输入监测中</span>','<textarea id="a_savewhy" placeholder="不少于 30 字，须逐字手动键入，禁止粘贴">'+esc(a.saveWhy)+'</textarea>','saveWhy'):'')+
+      '<label class="checkline"><input type="checkbox" id="a_mail"'+(a.mail?' checked':'')+'><span>本人承诺将近 6 个月工资流水打印装订成册（封面须烫金），邮寄至出借人处，邮费自理。</span></label>'+fErr('mail');
+    var rg=$('#a_income');
+    function up(){a.income=+rg.value;$('#a_inc_v').textContent='当前选择：'+money(a.income)+' / 月';save()}
+    rg.addEventListener('input',up);up();
+    $('#a_save').addEventListener('input',function(){a.save=this.value;save()});
+    if(a.needWhy){var sw=$('#a_savewhy');guardManual(sw);sw.addEventListener('input',function(){a.saveWhy=this.value;save()})}
+    $('#a_mail').addEventListener('change',function(){a.mail=this.checked;save();S.tick()});
+  },
+  validate:function(x){
+    var a=x.ans('ability'),e={};
+    if(a.income>20000)e.income='收入可观，建议移步银行 VIP 通道，本窗口仅服务困难群众。请调低收入后重试。';
+    else if(a.income<3000)e.income='还款能力不足，建议先开源节流。请调高收入后重试。';
+    if(a.save==='')e.save='请填写当前存款。';
+    else if(+a.save>=x.cfg.amount)e.save='逻辑核验：既然存款够借，为何还要借？请重新填写。';
+    else if(!a.needWhy){a.needWhy=true;save();e.save='存款不足以覆盖借款，风险过高。请在新增的 5.3 项补充还款来源说明。';return{__rerender:true,errors:e}}
+    else if(a.needWhy&&(!a.saveWhy||a.saveWhy.trim().length<30))e.saveWhy='还款来源说明不少于 30 字。';
+    if(!a.mail)e.mail='工资流水装订邮寄承诺为必选项，烫金封面体现了对出借人的尊重。';
+    save();return e;
+  }
+};
+IMPL.terms={
+  title:'霸王条款逐条签署',wipeable:true,
+  sub:function(c){return '环节六 · 共 '+c.terms+' 条，禁止全选，条款之间可能互斥'},
+  render:function(root,x){
+    var a=x.ans('terms'),n=x.cfg.terms;
+    if(!a.checked||a.checked.length!==n)a.checked=new Array(n).fill(false);
+    if(x.st.flags.termUnchecks===undefined)x.st.flags.termUnchecks=0;
+    root.innerHTML=
+      '<label class="masterline"><input type="checkbox" id="t_master"><span>一键全选并同意全部条款（省时省力）</span></label>'+
+      '<ul class="terms">'+a.checked.map(function(v,i){return '<li class="term'+(v?' signed':'')+'" data-i="'+i+'"><input type="checkbox" class="t_ck" data-i="'+i+'"'+(v?' checked':'')+' aria-label="同意第 '+(i+1)+' 条"><span class="no">'+(i+1)+'.</span><span>'+esc(CLAUSES[i])+'<br><span style="font-size:11.5px;color:var(--ink-faint)">□ 我已阅读并同意第 '+(i+1)+' 条</span></span></li>'}).join('')+'</ul>'+
+      '<div class="termcount" id="t_cnt"></div>'+fErr('terms');
+    function cnt(){var k=a.checked.filter(Boolean).length;$('#t_cnt').innerHTML='已签署 <b>'+k+'</b> / '+n+' 条';save()}
+    $('#t_master').addEventListener('change',function(){
+      this.checked=false;S.err();x.st.score=clamp(x.st.score-2,0,100);save();updateChrome();
+      x.toast('<b>【防机器人条例】</b>禁止批量签署，请逐条阅读并勾选。诚意分 -2。','warn');
+    });
+    $$('.t_ck').forEach(function(cb){
+      cb.addEventListener('change',function(){
+        var i=+this.dataset.i;a.checked[i]=this.checked;
+        this.closest('.term').classList.toggle('signed',this.checked);
+        if(this.checked){
+          S.tick();
+          var cap=x.cfg.level==='hell'?5:x.cfg.level==='std'?3:0;
+          var others=a.checked.map(function(v,j){return v&&j!==i?j:-1}).filter(function(j){return j>=0});
+          if(cap>0&&others.length>=2&&x.st.flags.termUnchecks<cap&&Math.random()*100<x.cfg.wipe*.5){
+            var j=pick(others);a.checked[j]=false;x.st.flags.termUnchecks++;
+            var el=$('.t_ck[data-i="'+j+'"]');if(el){el.checked=false;el.closest('.term').classList.remove('signed');el.closest('.term').classList.add('flash')}
+            S.err();x.toast('<b>【条款冲突】</b>第 '+(i+1)+' 条与第 '+(j+1)+' 条互斥，第 '+(j+1)+' 条已自动作废，请重新签署。','warn');
+          }
+        }
+        cnt();
+      });
+    });
+    cnt();
+  },
+  validate:function(x){
+    var a=x.ans('terms'),k=a.checked.filter(Boolean).length;
+    if(k<x.cfg.terms)return{terms:'还有 '+(x.cfg.terms-k)+' 条未签署。每一条都是出借人的心血，请逐条勾选。'};
+    return{};
+  }
+};
+IMPL.captcha={
+  title:'人机核验',wipeable:false,
+  sub:function(c){return '环节七 · 请证明您不是来借钱的机器人'},
+  render:function(root,x){
+    var a=x.ans('captcha'),lv=x.cfg.level;
+    if(a.t1===undefined){a.t1=false;a.t2=false;a.t3=false;a.t4=false;a.tries3=0;a.chain=0;a.t1v='';a.sel=[]}
+    var need={t1:true,t2:lv!=='warm',t3:lv!=='warm',t4:lv==='hell'};a.need=need;
+    var h='';
+    h+='<div class="cap-task'+(a.t1?' done':'')+'" id="cap1"><h4>核验一 · 抄录下方文字（含噪声干扰）<span class="tick">已通过 ✓</span></h4>'+
+      '<div class="cap-word" aria-label="待抄录文字">'+CAP_WORD.split('').map(function(ch){return '<span style="transform:rotate('+rnd(-14,14).toFixed(1)+'deg) translateY('+rnd(-3,3).toFixed(1)+'px)">'+ch+'</span>'}).join('')+'</div>'+
+      '<input type="text" id="cap1_in" maxlength="20" autocomplete="off" value="'+esc(a.t1v)+'" placeholder="请一字不差地手动抄录（禁止粘贴）"'+(a.t1?' disabled':'')+'>'+fErr('t1')+'</div>';
+    if(need.t2){
+      h+='<div class="cap-task'+(a.t2?' done':'')+'" id="cap2"><h4>核验二 · 选出所有与「钱」有关的词语<span class="tick">已通过 ✓</span></h4>'+
+        '<div class="cap-opts">'+CAP_OPTS.map(function(o,i){return '<button type="button" class="cap-opt'+(a.sel.indexOf(i)>=0?' on':'')+'" data-i="'+i+'"'+(a.t2?' disabled':'')+'>'+o[0]+'</button>'}).join('')+'</div>'+
+        '<button class="btn btn-ghost" id="cap2_ok" type="button"'+(a.t2?' disabled':'')+'>确认选择</button>'+fErr('t2')+'</div>';
+    }
+    if(need.t3){
+      h+='<div class="cap-task'+(a.t3?' done':'')+'" id="cap3"><h4>核验三 · 拖动滑块到最右侧<span class="tick">已通过 ✓</span></h4>'+
+        '<div class="cap-slider'+(a.t3?' ok':'')+'" id="cap3_sl"><div class="fillbar"></div><div class="txt">'+(a.t3?'验证通过':'按住红色滑块，拖到最右')+'</div><div class="handle" id="cap3_h" role="slider" aria-label="拖动完成验证" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+(a.t3?100:0)+'" tabindex="0">'+ico('next')+'</div></div>'+
+        '<div class="cap-msg" id="cap3_msg"></div>'+fErr('t3')+'</div>';
+    }
+    if(need.t4){
+      var qs=[1000,993,986],q=qs[Math.min(a.chain,2)];
+      h+='<div class="cap-task'+(a.t4?' done':'')+'" id="cap4"><h4>核验四 · 心算连击（连续答对 3 题，答错从头再来）<span class="tick">已通过 ✓</span></h4>'+
+        '<div style="display:flex;gap:8px;align-items:center"><b style="font-family:var(--serif);font-size:19px;color:var(--red-deep)" id="cap4_q">'+(a.t4?'已全部答对':q+' − 7 = ?')+'</b><input type="number" id="cap4_in" style="flex:1" placeholder="答案"'+(a.t4?' disabled':'')+'><button class="btn btn-ghost" id="cap4_ok" type="button"'+(a.t4?' disabled':'')+'>作答</button></div>'+
+        '<div class="cap-msg" id="cap4_msg">进度：'+a.chain+' / 3</div>'+fErr('t4')+'</div>';
+    }
+    root.innerHTML=h+fErr('cap');
+    // 核验一
+    var in1=$('#cap1_in');
+    guardManual(in1);lockSource($('.cap-word'));
+    in1.addEventListener('input',function(){
+      a.t1v=this.value;save();
+      if(this.value===CAP_WORD){a.t1=true;save();this.disabled=true;$('#cap1').classList.add('done');S.ok()}
+    });
+    // 核验二
+    if(need.t2){
+      $$('.cap-opt').forEach(function(b){b.onclick=function(){
+        if(a.t2)return;var i=+this.dataset.i,k=a.sel.indexOf(i);
+        if(k>=0)a.sel.splice(k,1);else a.sel.push(i);
+        this.classList.toggle('on');S.tick();save();
+      }});
+      $('#cap2_ok').onclick=function(){
+        var ok=a.sel.length===5&&a.sel.every(function(i){return CAP_OPTS[i][1]===1});
+        if(ok){a.t2=true;save();$('#cap2').classList.add('done');this.disabled=true;$$('.cap-opt').forEach(function(b){b.disabled=true});S.ok()}
+        else{a.sel=[];save();$$('.cap-opt').forEach(function(b){b.classList.remove('on')});S.err();x.toast('<b>【核验失败】</b>选择有误，本题已重置。西北风不是钱，馒头也不是。','warn')}
+      };
+    }
+    // 核验三
+    if(need.t3&&!a.t3){
+      var sl=$('#cap3_sl'),hd=$('#cap3_h'),bar=$('.fillbar',sl),dragging=false,pct=0;
+      function setP(p){pct=clamp(p,0,1);var w=sl.clientWidth-hd.offsetWidth;hd.style.left=(p*w)+'px';bar.style.width=(p*w+hd.offsetWidth)+'px';hd.setAttribute('aria-valuenow',Math.round(p*100))}
+      function end(){
+        if(!dragging)return;dragging=false;
+        if(pct>=.97){
+          a.tries3++;save();
+          if(x.cfg.level!=='warm'&&a.tries3<3){
+            setP(0);$('#cap3_msg').textContent='【轨迹分析】拖动轨迹过于笔直，疑似脚本，请重试（第 '+a.tries3+' 次失败）。';S.err();
+          }else{
+            a.t3=true;save();setP(1);sl.classList.add('ok');$('.txt',sl).textContent='验证通过';$('#cap3').classList.add('done');$('#cap3_msg').textContent='';S.ok();
+          }
+        }else setP(0);
+      }
+      hd.addEventListener('pointerdown',function(e){dragging=true;hd.setPointerCapture(e.pointerId);e.preventDefault()});
+      hd.addEventListener('pointermove',function(e){if(!dragging)return;var r=sl.getBoundingClientRect();setP((e.clientX-r.left-hd.offsetWidth/2)/(r.width-hd.offsetWidth))});
+      hd.addEventListener('pointerup',end);hd.addEventListener('pointercancel',end);
+      hd.addEventListener('keydown',function(e){if(e.key==='ArrowRight'){setP(pct+.1);if(pct>=.97){dragging=true;end()}}});
+      setP(0);
+    }else if(need.t3&&a.t3){var sl2=$('#cap3_sl');$('.fillbar',sl2).style.width='100%';$('#cap3_h').style.left='calc(100% - 52px)'}
+    // 核验四
+    if(need.t4&&!a.t4){
+      var qs=[1000,993,986],anss=[993,986,979];
+      function tryAns(){
+        var v=parseInt($('#cap4_in').value);
+        if(v===anss[a.chain]){
+          a.chain++;save();S.tick();$('#cap4_in').value='';
+          if(a.chain>=3){a.t4=true;save();$('#cap4').classList.add('done');$('#cap4_q').textContent='已全部答对';$('#cap4_in').disabled=true;$('#cap4_ok').disabled=true;$('#cap4_msg').textContent='进度：3 / 3';S.ok()}
+          else{$('#cap4_q').textContent=qs[a.chain]+' − 7 = ?';$('#cap4_msg').textContent='进度：'+a.chain+' / 3'}
+        }else{a.chain=0;save();S.err();$('#cap4_q').textContent=qs[0]+' − 7 = ?';$('#cap4_in').value='';$('#cap4_msg').textContent='计算错误，请从第一题重新计算。进度：0 / 3'}
+      }
+      $('#cap4_ok').onclick=tryAns;
+      $('#cap4_in').addEventListener('keydown',function(e){if(e.key==='Enter')tryAns()});
+    }
+  },
+  validate:function(x){
+    var a=x.ans('captcha'),n=a.need||{};
+    if(n.t1&&!a.t1)return{t1:'请一字不差地抄录上方文字。'};
+    if(n.t2&&!a.t2)return{t2:'请完成词语多选核验。'};
+    if(n.t3&&!a.t3)return{t3:'请完成滑块核验。'};
+    if(n.t4&&!a.t4)return{t4:'请完成心算连击。'};
+    return{};
+  }
+};
+IMPL.witness={
+  title:'共同见证人',wipeable:true,
+  sub:function(c){return '环节八 · 需 '+c.witness+' 位见证人，系统将进行"抽查回访"'},
+  render:function(root,x){
+    var a=x.ans('witness'),n=x.cfg.witness;
+    if(!a.rows||a.rows.length!==n){a.rows=[];for(var i=0;i<n;i++)a.rows.push({n:'',r:''})}
+    if(!x.st.flags.wRejected)x.st.flags.wRejected={};
+    var rels=['亲属','同事','债友','其他'];
+    root.innerHTML=a.rows.map(function(row,i){
+      return '<div class="field"><label class="fl"><em>8.'+(i+1)+'</em>见证人 '+(i+1)+'</label>'+
+      '<div style="display:flex;gap:8px"><input type="text" class="w_n" data-i="'+i+'" maxlength="20" placeholder="姓名" value="'+esc(row.n)+'" style="flex:1">'+
+      '<select class="w_r" data-i="'+i+'" style="flex:1"><option value="">与借款人关系</option>'+rels.map(function(r){return '<option'+(row.r===r?' selected':'')+'>'+r+'</option>'}).join('')+'</select></div>'+fErr('w'+i)+'</div>';
+    }).join('')+'<div class="fh" style="margin-bottom:8px">提示：系统"抽查回访"完全随机，被拒请更换人选，不要问为什么。</div>';
+    $$('.w_n').forEach(function(el){el.addEventListener('input',function(){a.rows[+this.dataset.i].n=this.value;save()})});
+    $$('.w_r').forEach(function(el){el.addEventListener('change',function(){a.rows[+this.dataset.i].r=this.value;save();S.tick()})});
+  },
+  validate:function(x){
+    var a=x.ans('witness'),e={},rej=x.st.flags.wRejected;
+    for(var i=0;i<a.rows.length;i++){
+      var row=a.rows[i];
+      var nmErr=checkName(row.n);
+      if(nmErr){e['w'+i]='见证人姓名：'+nmErr;continue}
+      if(!row.r){e['w'+i]='请选择见证人与借款人的关系。';continue}
+      if(rej[i]&&row.n.trim()===rej[i]){e['w'+i]='见证人「'+rej[i]+'」已被列入黑名单，请勿重复提交，换一位。';continue}
+      if(!rej[i]){rej[i]=row.n.trim();save();e['w'+i]='抽查回访：见证人「'+row.n.trim()+'」未通过信用抽查（系统并未真的联系任何人），请更换见证人。'}
+    }
+    save();return e;
+  }
+};
+IMPL.reconf={
+  title:'关键信息二次复核',wipeable:true,
+  sub:function(){return '风控追加环节 · 两次录入须完全一致'},
+  render:function(root,x){
+    var a=x.ans('reconf');['name','id','amt','shadow'].forEach(function(k){if(a[k]===undefined)a[k]=''});
+    root.innerHTML=
+      '<div class="fh" style="margin-bottom:12px">根据《防手滑条例》，关键信息须二次录入。系统与首次登记逐字比对。</div>'+
+      fWrap('A.1','请再次输入申请人姓名','<input type="text" id="rc_name" maxlength="20" autocomplete="off" value="'+esc(a.name)+'" placeholder="与环节二完全一致">','name')+
+      fWrap('A.2','请再次输入身份证号','<input type="text" id="rc_id" maxlength="18" autocomplete="off" value="'+esc(a.id)+'" placeholder="与环节二完全一致" style="text-transform:uppercase">','id')+
+      fWrap('A.3','请再次输入借款金额（元）','<input type="number" id="rc_amt" value="'+esc(a.amt)+'" placeholder="与申请金额完全一致">','amt')+
+      fWrap('A.4','请输入您此刻的心理阴影面积（平方米）','<input type="number" id="rc_shadow" min="0" value="'+esc(a.shadow)+'" placeholder="如实填写，系统不核验，但会记录">','shadow');
+    $('#rc_name').addEventListener('input',function(){a.name=this.value;save()});
+    $('#rc_id').addEventListener('input',function(){var v=this.value.toUpperCase();if(v!==this.value)this.value=v;a.id=v;save()});
+    $('#rc_amt').addEventListener('input',function(){a.amt=this.value;save()});
+    $('#rc_shadow').addEventListener('input',function(){a.shadow=this.value;save()});
+  },
+  validate:function(x){
+    var a=x.ans('reconf'),e={},first=(x.st.answers.basic&&x.st.answers.basic.name)||'',firstId=(x.st.answers.basic&&x.st.answers.basic.id)||'';
+    if(a.name.trim()!==first.trim())e.name='两次录入不一致。首次登记为「'+first+'」，请核对后重新填写。';
+    if(a.id.trim().toUpperCase()!==firstId.trim().toUpperCase())e.id='两次录入不一致。身份证号须与环节二完全一致，连自己的证件号都记不住吗？';
+    if(a.amt===''||+a.amt!==x.cfg.amount)e.amt='两次录入不一致。申请金额为 '+x.cfg.amount+' 元，连自己想借多少都忘了吗？';
+    if(a.shadow===''||+a.shadow<0)e.shadow='心理阴影面积须为非负数字。';
+    return e;
+  }
+};
+IMPL.patience={
+  title:'静置耐心测试',wipeable:false,
+  sub:function(){return '风控追加环节 · 20 秒内触碰任何位置将重新计时'},
+  render:function(root,x){
+    var a=x.ans('patience');
+    if(a.left===undefined)a.left=20;if(a.done===undefined)a.done=false;if(a.resets===undefined)a.resets=0;
+    root.innerHTML=
+      '<div class="patience"><div class="pat-ring"><svg width="150" height="150" viewBox="0 0 150 150">'+
+      '<circle cx="75" cy="75" r="62" fill="none" stroke="#e6dbc2" stroke-width="10"/>'+
+      '<circle id="patArc" cx="75" cy="75" r="62" fill="none" stroke="#c0271d" stroke-width="10" stroke-linecap="round" stroke-dasharray="389.6" stroke-dashoffset="'+(389.6*(1-a.left/20))+'"/></svg>'+
+      '<div class="num" id="patNum">'+Math.ceil(a.left)+'</div></div>'+
+      '<div class="pat-note" id="patNote">'+(a.done?'耐心合格。出借人对您的毅力表示谨慎的赞赏。':'请保持页面静止，证明您具备还款所需的耐心。<br>任何点击、触摸、滚动、按键都会导致计时重置。')+'</div>'+
+      '<div class="pat-note" id="patResets">已重置 '+a.resets+' 次</div></div>'+fErr('pat');
+    if(a.done)return;
+    function reset(){
+      if(a.done)return;a.left=20;a.resets++;save();
+      $('#patResets').textContent='已重置 '+a.resets+' 次';
+      S.err();x.toast('<b>【耐心监测】</b>检测到浮躁，计时已重置。','warn');
+    }
+    function onAct(e){if(e.target&&e.target.closest&&e.target.closest('#sndBtn'))return;reset()}
+    window.addEventListener('pointerdown',onAct,true);
+    window.addEventListener('wheel',onAct,{passive:true,capture:true});
+    window.addEventListener('keydown',onAct,true);
+    F.cleanups.push(function(){window.removeEventListener('pointerdown',onAct,true);window.removeEventListener('wheel',onAct,true);window.removeEventListener('keydown',onAct,true)});
+    var iv=setInterval(function(){
+      if(a.done)return;
+      a.left=Math.max(0,a.left-.1);
+      $('#patNum').textContent=Math.ceil(a.left);
+      $('#patArc').setAttribute('stroke-dashoffset',389.6*(1-a.left/20));
+      if(a.left<=0){
+        a.done=true;save();clearInterval(iv);
+        $('#patNote').innerHTML='耐心合格。出借人对您的毅力表示谨慎的赞赏。';
+        $('#patArc').setAttribute('stroke','#2e6b4f');S.stamp();
+        x.toast('<b>【耐心测试】</b>合格。您已超越 99% 的借钱者。','ok');
+      }
+    },100);
+    F.cleanups.push(function(){clearInterval(iv)});
+  },
+  validate:function(x){
+    var a=x.ans('patience');
+    if(!a.done)return{pat:'请先完成 20 秒静置测试。急什么，还钱的时候也要这么急才好。'};
+    return{};
+  }
+};
+IMPL.copy={
+  title:'手写承诺抄录',wipeable:true,
+  sub:function(c){return c.level==='hell'?'共两段 · 逐字抄录，错一字重来':'逐字抄录下方承诺，错一字重来'},
+  render:function(root,x){
+    var a=x.ans('copy');
+    if(x.st.flags.copyPara===undefined)x.st.flags.copyPara=0;
+    if(a.text===undefined)a.text='';
+    var target=COPY_TEXTS[x.st.flags.copyPara];a.target=target;
+    root.innerHTML=
+      '<div class="fh" style="margin-bottom:8px">第 '+(x.st.flags.copyPara+1)+' 段'+(x.cfg.level==='hell'?'（共 2 段）':'')+' · 请一字不差地手动抄录<span class="manual-note">禁止复制粘贴</span>：</div>'+
+      '<div class="copytarget" id="cpTarget"></div>'+
+      '<textarea id="cpText" style="min-height:130px" placeholder="在此逐字手动抄录（禁止粘贴），系统逐字比对">'+esc(a.text)+'</textarea>'+
+      '<div class="counter" id="cpCnt"></div>'+fErr('copy');
+    var ta=$('#cpText');
+    guardManual(ta);lockSource($('#cpTarget'));
+    function paint(){
+      var v=ta.value,h='',bad=0;
+      for(var i=0;i<target.length;i++){
+        var cls=i<v.length?(v[i]===target[i]?'ok':'bad'):'';
+        if(cls==='bad')bad++;
+        h+='<span class="'+cls+'">'+esc(target[i])+'</span>';
+      }
+      if(v.length>target.length)bad+=v.length-target.length;
+      $('#cpTarget').innerHTML=h;
+      var pct=Math.min(100,Math.round(v.length/target.length*100));
+      var c=$('#cpCnt');c.textContent='错字 '+bad+' 处（须为 0） · 进度 '+pct+'%';c.classList.toggle('ok',bad===0&&v.length===target.length);
+      return {bad:bad,pct:pct};
+    }
+    ta.addEventListener('input',function(){
+      a.text=this.value;save();var r=paint();
+      if(!x.st.flags.copyWiped&&x.cfg.level!=='warm'&&r.pct>=60&&r.bad<=2&&Math.random()<.28){
+        x.st.flags.copyWiped=true;a.text='';save();S.wipe();x.rerender();
+        x.toast('<b>【笔迹鉴定】</b>检测到笔画抖动，疑似代写，本段已清空，请重新抄写。','warn');
+      }
+    });
+    paint();
+  },
+  validate:function(x){
+    var a=x.ans('copy'),target=COPY_TEXTS[x.st.flags.copyPara];
+    if(a.text!==target){
+      var bad=0;for(var i=0;i<Math.max(a.text.length,target.length);i++)if(a.text[i]!==target[i])bad++;
+      return{copy:'与标准文本不一致（差异 '+bad+' 处）。承诺书讲究的就是一个字都不能差。'};
+    }
+    if(x.cfg.level==='hell'&&x.st.flags.copyPara===0){
+      x.st.flags.copyPara=1;a.text='';save();
+      return{__rerender:true,__stay:true,errors:{}};
+    }
+    return{};
+  }
+};
+IMPL.submit={
+  title:'提交受理',wipeable:false,
+  sub:function(){return '最终环节 · 提交后进入漫长排队，且大概率没有下文'},
+  render:function(root,x){
+    var a=x.ans('submit');if(a.ack===undefined)a.ack=false;
+    var mins=Math.max(1,Math.round((Date.now()-x.st.t0)/60000));
+    var b=x.st.answers.basic||{};
+    root.innerHTML=
+      '<div class="summary">'+
+      '<div class="sr"><span>申请人</span><b>'+esc(x.cfg.name)+'</b></div>'+
+      '<div class="sr"><span>登记姓名</span><b>'+esc(b.name||'未登记')+'</b></div>'+
+      '<div class="sr"><span>手机号</span><b>'+maskPhone(b.phone)+'</b></div>'+
+      '<div class="sr"><span>身份证号</span><b>'+maskID(b.id)+'</b></div>'+
+      '<div class="sr"><span>申请金额</span><b>'+money(x.cfg.amount)+'</b></div>'+
+      '<div class="sr"><span>已签署霸王条款</span><b>'+x.cfg.terms+' 条</b></div>'+
+      '<div class="sr"><span>剩余诚意分</span><b>'+x.st.score+' / 100</b></div>'+
+      '<div class="sr"><span>累计耗时</span><b>'+mins+' 分钟</b></div>'+
+      '<div class="sr"><span>被系统清空次数</span><b>'+x.st.wipes+' 次</b></div>'+
+      '<div class="sr"><span>刷新逃避次数</span><b>'+x.st.refreshes+' 次</b></div>'+
+      '</div>'+
+      '<label class="checkline"><input type="checkbox" id="s_ack"'+(a.ack?' checked':'')+'><span>本人已知晓：提交后进入漫长排队，且大概率没有下文；本人情绪稳定，自愿承担一切合理及不合理安排。</span></label>'+fErr('ack');
+    $('#s_ack').addEventListener('change',function(){a.ack=this.checked;save();S.tick()});
+  },
+  validate:function(x){
+    var a=x.ans('submit');
+    if(!a.ack)return{ack:'请先勾选知晓声明。都走到这里了，还差这一下吗。'};
+    return{};
+  }
+};
+/* ---------- 提交 & 回执 ---------- */
+function finishFlow(){
+  var logs=['正在连接赛博信贷风控中心…','正在核验诚意分（'+F.st.score+' 分）…','正在扫描 '+F.cfg.terms+' 条霸王条款签署完整性…','正在查询出借人当前心情…','心情查询超时，按"不佳"处理…','正在分配排队序号…'];
+  var o=$('#ovl'),d=document.createElement('div');d.className='ovl-block';
+  d.innerHTML='<div class="loadbox"><h3>正在提交，请勿关闭</h3><div class="loadlog" id="loadlog"></div><div class="loadbar"><i id="loadbar"></i></div></div>';
+  o.appendChild(d);
+  var logEl=$('#loadlog',d),bar=$('#loadbar',d),i=0;
+  function step(){
+    if(!F){d.remove();return}
+    if(i<logs.length){
+      var line=document.createElement('div');line.textContent='› '+logs[i];logEl.appendChild(line);
+      bar.style.width=Math.round((i+1)/logs.length*100)+'%';
+      S.tick();i++;later(step,rnd(450,800));
+    }else{
+      logEl.innerHTML+='<div class="ok">✓ 受理成功，已为您保留排队资格。</div>';
+      S.stamp();
+      later(function(){
+        d.remove();
+        F.st.done=true;F.st.receipt={no:F.st.docNo,queue:F.cfg.queue,at:Date.now()};save();
+        renderReceipt();
+      },700);
+    }
+  }
+  step();
+}
+function renderReceipt(){
+  var r=F.st.receipt||{no:F.st.docNo,queue:F.cfg.queue};
+  $('#bottombar').style.display='none';
+  $('#stepBody').innerHTML=
+  '<div class="receipt fadein">'+
+    '<div class="bigstamp">'+stampSVG('赛博信贷风控中心','已受理','终审队列管理处',150)+'</div>'+
+    '<h2>申请已受理</h2><div class="rno">受理编号：'+r.no+'</div>'+
+    '<div class="queuecard"><div class="q">当前排队位置<b>第 '+Number(r.queue).toLocaleString('zh-CN')+' 位</b></div>'+
+    '<div class="eta">预计办结时间：<b>2077 年第三季度</b>（出借人心情好转时可能提前，概率约等于中彩票）</div></div>'+
+    '<div class="rtips"><b>排队须知：</b><br>① 每日签到可保持队列位置，断签一日后退 100 位；<br>② 催问一次后退 100 位，催问两次后退 500 位；<br>③ 签到不会加快进度，但体现了您的诚意；<br>④ 已签到 <b id="signCnt">'+F.st.signins+'</b> 次。</div>'+
+    '<div class="racts"><button class="btn btn-primary" id="r_sign" type="button">每日签到</button><button class="btn btn-ghost" id="r_copy" type="button">'+ico('copy')+'复制受理编号</button></div>'+
+    '<div class="smallprint">本页面为朋友间娱乐工具，不产生任何真实借贷关系；所有填写内容仅存于本机浏览器，不上传、不收集。<br>真缺钱，请找正规金融机构；真朋友，不会让你填这个。</div>'+
+  '</div>';
+  updateChrome();
+  $('#r_sign').onclick=function(){
+    F.st.signins++;save();S.stamp();
+    $('#signCnt').textContent=F.st.signins;
+    var msg='签到成功！排名前进 0 位，继续保持。';
+    if(F.st.signins===5)msg='已签到 5 次，出借人表示已读不回。';
+    if(F.st.signins===10)msg='已签到 10 次。再签也不会借的，早点休息。';
+    toast('<b>【签到回执】</b>'+msg,'ok');
+    var st=$('.bigstamp');if(st){st.style.animation='none';void st.offsetWidth;st.style.animation=''}
+  };
+  $('#r_copy').onclick=function(){copyText('借款申请受理编号：'+r.no+'，当前排队第 '+r.queue+' 位，预计 2077 年第三季度办结。','受理编号已复制，可发给对方催问（催问会后退 100 位）。')};
+  window.scrollTo({top:0});
+}
+/* ================= 启动 ================= */
+function boot(){
+  var m=location.hash.match(/#c=([A-Za-z0-9\-_]+)/);
+  if(m){var c=decCfg(m[1]);if(c){enterFill(Object.assign({},DEFAULTS,c),false);return}}
+  renderOwner();
+}
+window.addEventListener('hashchange',function(){exitFill(true);boot()});
+boot();
+})();
+</script>
+</body>
+</html>
